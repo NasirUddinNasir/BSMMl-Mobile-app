@@ -105,7 +105,7 @@ Widget customOutlinedButton({
   required String text,
   required  onpressed,
   double textSize = 21,
-  IconData? icon,
+  String? icon,
 }){
   return OutlinedButton(
 
@@ -119,13 +119,18 @@ Widget customOutlinedButton({
     ),
     onPressed:onpressed,
         child:  Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
+          mainAxisSize: MainAxisSize.min,
+          children: [
           if (icon != null) ...[
-           Icon(icon, size: 30, color: smallTextColor),
-           SizedBox(width: 15), // Space between text and icon
+            SizedBox(
+              height: 50,
+              width: 50,
+              child: Image.asset(icon, color: smallTextColor),
+            ),
+           
+           SizedBox(width: 10), // Space between text and icon
           ],
-          customText(text: text, size: textSize, weight: FontWeight.w400, color: smallTextColor),
+          customText(text: text, size: 16, weight: FontWeight.w400, color: smallTextColor),
     
          ],
      ),

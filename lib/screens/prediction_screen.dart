@@ -23,10 +23,24 @@ class PredictionScreen extends StatelessWidget {
                     alignment: Alignment(-0.75,0),
                     child: customText(text: 'Select and option to continue:',size: 21),
                   ),
+
                   customOutlinedButton(
-                    icon: Icons.perm_data_setting,
+                    icon: 'assets/icons/overview.png',
                     text: 'Overview your data', 
-                    onpressed: (){})
+                    onpressed: (){}
+                    ),
+
+                  customOutlinedButton(
+                    icon: 'assets/icons/prediction.png',
+                    text:'Explore Relation in Data', 
+                    onpressed:(){}
+                    ),    
+
+                  customOutlinedButton(
+                    // icon: '4.png',
+                    text:'Make Predictions with models', 
+                    onpressed: (){}
+                    )          
             ],
           ),
       ),
