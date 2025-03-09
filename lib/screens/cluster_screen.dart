@@ -1,8 +1,8 @@
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 
-class PredictionScreen extends StatelessWidget {
-  const PredictionScreen({super.key});
+class ClusterScreen extends StatelessWidget {
+  const ClusterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +22,11 @@ class PredictionScreen extends StatelessWidget {
 
                  SizedBox(height: 5,),
 
-                 customText(text: "Explore your Data or \nmake predictions" ,size: headingTextSize,weight: FontWeight.w500, alignText: TextAlign.center),
+                 customText(text: "Explore your Data or \nmake Clusters" ,size: headingTextSize,weight: FontWeight.w500, alignText: TextAlign.center),
                  Image.asset(
                    height:screenHeight*0.35,
                    width: screenWidth*0.8,
-                  'assets/images/prediction.png'
+                  'assets/images/cluster.png'
                   ),
                   Align(
                     alignment: Alignment(-0.65,0),
@@ -53,8 +53,8 @@ class PredictionScreen extends StatelessWidget {
                    SizedBox(height: 18), 
 
                   customOutlinedButton(
-                    icon: 'assets/images/Prediction_icon.png',
-                    text:'Make Predictions with models', 
+                    icon: 'assets/images/cluster_icon.png',
+                    text:'Cluster your data', 
                     onpressed: (){}
                     )          
             ],

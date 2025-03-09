@@ -110,27 +110,25 @@ Widget customOutlinedButton({
   return OutlinedButton(
 
     style: OutlinedButton.styleFrom(
-      minimumSize: Size(screenWidth*0.95, 50),
-      shape:RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+      overlayColor: smallTextColor,
+      alignment: Alignment.centerLeft,
+      minimumSize: Size(screenWidth*0.89, screenHeight*0.065),
+      shape:RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
       side: BorderSide(
         width: 2, 
-        color: Colors.grey,
+        color:smallTextColor,
         )
     ),
     onPressed:onpressed,
         child:  Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
           if (icon != null) ...[
-            SizedBox(
-              height: 50,
-              width: 50,
-              child: Image.asset(icon, color: smallTextColor),
-            ),
-           
-           SizedBox(width: 10), // Space between text and icon
+            Image.asset(icon, color: customBlueColor,height: 30,width: 30,),         
+           SizedBox(width: 15), // Space between text and icon
           ],
-          customText(text: text, size: 16, weight: FontWeight.w400, color: smallTextColor),
+          customText(text: text, size: 15, weight: FontWeight.w500, color: customBlueColor,  ),
     
          ],
      ),
