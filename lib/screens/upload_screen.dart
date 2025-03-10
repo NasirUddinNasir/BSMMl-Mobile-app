@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/screens/prediction_screen.dart';
 import 'package:analysis_app/screens/cluster_screen.dart';
+import 'package:analysis_app/screens/overview_screen.dart';
 
 class CSVUploader extends StatefulWidget {
   const CSVUploader({super.key,});
@@ -19,57 +20,65 @@ class CSVUploaderState extends State<CSVUploader> {
    File? csvFile;
    String fileLastName = '';
 
-  Future<void> _pickCSVFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.any, // Allow all file types
-    withData: true, // Ensure we get file data
-  );
+ Future<void> _pickCSVFile() async {
+  try {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.any, // Allow all file types
+      withData: true, // Ensure we get file data
+    );
 
-  if (result != null) {
-    PlatformFile file = result.files.first;
+    if (result != null) {
+      PlatformFile file = result.files.first;
 
-    // Check if the selected file has a .csv extension
-    if (file.extension == "csv") {
-      File pickedCSVFile = File(file.path!);
-      String lastName = File(file.path!).uri.pathSegments.last;
-      fileLastName = lastName;
+      // Check if the selected file has a .csv extension
+      if (file.extension == "csv") {
+        File pickedCSVFile = File(file.path!);
+        String lastName = File(file.path!).uri.pathSegments.last;
+        fileLastName = lastName;
 
-      setState(() {
-        csvFile = pickedCSVFile;
-      });
+        setState(() {
+          csvFile = pickedCSVFile;
+        });
 
-      // ✅ Show success message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("CSV File Selected: ${csvFile!.path}"),
-            backgroundColor: Colors.green,
-          ),
-        );
+        // ✅ Show success message
+        if (mounted) {
+          customSnackBar(context, 
+          message: 'File selected successfully',
+          backgroundColor: Colors.green,
+          );
+        }
+      } else {
+        // ❌ Show error if not CSV
+        if (mounted) {
+          customSnackBar(
+            context, 
+            message: 'Invalid file type. Please select a CSV file',
+            backgroundColor: Colors.red,
+          );
+        }
       }
     } else {
-      // ❌ Show error if not CSV
+      // 🟠 Show message when user cancels file selection
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Invalid file type. Please select a CSV file."),
-            backgroundColor: Colors.red,
-          ),
-        );
+        customSnackBar(
+          context, 
+          message: 'No file selected',
+          backgroundColor: Colors.orange,
+          );
       }
     }
-  } else {
-    // 🟠 Show message when user cancels file selection
+  } catch (e) {
+    // 🔴 Handle unexpected errors
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("File selection canceled"),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      customSnackBar(
+        context, 
+        message: 'An error occurred. Please try again',
+        backgroundColor: Colors.red,
+        );
     }
   }
 }
+
   
 
   @override
@@ -210,24 +219,29 @@ class CSVUploaderState extends State<CSVUploader> {
                 }
                 else{
                   if(predictORcluster==null){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Select an option first"),
-                        backgroundColor: Colors.orange,
-                      ),
-                    );
+                    customSnackBar(
+                      context, 
+                      message: 'Please select an option fist',
+                      backgroundColor: Colors.orange,
+                      );
                   }
                   else{
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Please upload a CSV file"),
-                        backgroundColor: Colors.orange,
-                      ),
-                    );
+                    customSnackBar(
+                      context, 
+                      message: 'Please upload a CSV file to Continue',
+                      backgroundColor: Colors.orange,
+                      );
                   }
                 }
               }
             ),
+          // This button is just to navigate and will be removed
+          IconButton(
+            onPressed: (){
+              navigateToPage(context, OverviewScreen());
+            }, 
+            icon: Icon(Icons.arrow_forward),
+            )
           ],
         ),
       ),

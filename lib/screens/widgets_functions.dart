@@ -134,3 +134,20 @@ Widget customOutlinedButton({
      ),
   );
 }
+
+
+// custom snakebar messanger
+void customSnackBar(
+  BuildContext context, 
+  {
+  required String message, 
+  Color backgroundColor = Colors.red,
+  Color textColor = Colors.white,
+  }){
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: customText(text: message, size: 15, color: textColor),
+      backgroundColor: backgroundColor,
+    ),
+  );
+}
