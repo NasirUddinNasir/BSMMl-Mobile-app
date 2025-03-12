@@ -1,10 +1,11 @@
 import 'dart:io';
+import 'package:analysis_app/screens/relation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/screens/prediction_screen.dart';
 import 'package:analysis_app/screens/cluster_screen.dart';
-import 'package:analysis_app/screens/overview_screen.dart';
+
 
 class CSVUploader extends StatefulWidget {
   const CSVUploader({super.key,});
@@ -238,7 +239,7 @@ class CSVUploaderState extends State<CSVUploader> {
           // This button is just to navigate and will be removed
           IconButton(
             onPressed: (){
-              navigateToPage(context, OverviewScreen());
+              navigateToPage(context, RelationScreen());
             }, 
             icon: Icon(Icons.arrow_forward),
             )

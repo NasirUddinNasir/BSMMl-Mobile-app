@@ -151,3 +151,75 @@ void customSnackBar(
     ),
   );
 }
+
+
+// Custom Dropdown Menu
+
+Widget customDropDownMenu({
+  required BuildContext context,
+  required TextEditingController controller,
+  required List<String> columnValues,
+  required String selectedValue,
+  required VoidCallback setStateCallback,
+}){
+  GlobalKey textFieldKey = GlobalKey(); // Unique key for positioning
+  return TextField(
+  key: textFieldKey, // Assign the key to the TextField
+  controller: controller,
+  readOnly: true,
+  decoration: InputDecoration(
+    labelText: "Select Column",
+    suffixIcon: Icon(Icons.arrow_drop_down),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+  onTap: () {
+    // Get the position of the TextField
+    RenderBox renderBox = textFieldKey.currentContext!.findRenderObject() as RenderBox;
+    Offset offset = renderBox.localToGlobal(Offset.zero); 
+    double width = renderBox.size.width;
+    double height = renderBox.size.height;
+
+
+    showMenu(
+      color: Colors.white,
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx, // Left position (same as TextField)
+        offset.dy + height, // Appear directly below TextField
+        offset.dx + width, // Match width with TextField
+        offset.dy + height + 200, // Keep it within screen bounds
+      ),
+      items: columnValues.map((name) {
+        return PopupMenuItem<String>(
+          value: name,
+          child: Container(
+            width: width-20 , // Match width with TextField
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            decoration: BoxDecoration(
+
+              color: Colors.blue.withValues(alpha: 0.2), // Light blue background
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              name,
+              style: TextStyle(
+                color: smallTextColor.withValues(alpha: 0.7), 
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    ).then((selectedName) {
+      if (selectedName != null) {
+        setStateCallback();
+          controller.text = selectedName;
+          selectedValue= selectedName;
+  }
+  }
+  );
+      }
+);
+}

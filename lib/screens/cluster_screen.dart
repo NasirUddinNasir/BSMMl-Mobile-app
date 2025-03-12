@@ -1,3 +1,4 @@
+import 'package:analysis_app/screens/overview_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ class ClusterScreen extends StatelessWidget {
                   customOutlinedButton(
                     icon: 'assets/images/overview_icon.png',
                     text: 'Overview your data', 
-                    onpressed: (){}
+                    onpressed: ()=> navigateToPage(context, OverviewScreen())
                     ),
                      
                   SizedBox(height: 18),
