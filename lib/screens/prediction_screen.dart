@@ -14,7 +14,7 @@ class PredictionScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
 
-                 SizedBox(height: screenHeight*0.055),
+                 SizedBox(height: screenHeight*0.045),
 
                  Align(
                     alignment: Alignment.centerLeft,

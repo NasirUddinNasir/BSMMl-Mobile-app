@@ -119,7 +119,7 @@ class OverviewScreenState extends State<OverviewScreen>{
             child: Column(
                 children: [
 
-                  SizedBox(height: screenHeight*0.045),
+                  SizedBox(height: screenHeight*0.040),
 
                   Align(
                     alignment: Alignment.centerLeft,

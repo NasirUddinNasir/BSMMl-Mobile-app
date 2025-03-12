@@ -9,6 +9,7 @@ WidgetsFlutterBinding.ensureInitialized();
 
   // Lock the app in portrait mode
   SystemChrome.setPreferredOrientations([
+    
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);

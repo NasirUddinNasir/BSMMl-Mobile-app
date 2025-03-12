@@ -11,10 +11,14 @@ class RelationScreen extends StatefulWidget{
 }
 
 class RelationScreenState extends State<RelationScreen>{
+    List<String> columnValues = ["nasir", "ahmad", "hasnain", "jawad", "5", "6", "7"];
 
   TextEditingController controller = TextEditingController();
-  List<String> columnValues = ["1", "2", "3", "4", "5", "6", "7"]; // Example data
-  String selectedValue = ""; // Example data
+   TextEditingController controller2 = TextEditingController();
+
+
+  String column1 = ""; 
+   String column2 = ""; 
   
 
 
@@ -24,38 +28,117 @@ class RelationScreenState extends State<RelationScreen>{
       body: Center(
         child: Column(
           children: [
+            SizedBox(height: screenHeight*0.04),
             Align(
               alignment: Alignment.centerLeft,
               child: iconButton(context),
             ),
-            SizedBox(height: 10,),
-            customText(text: 'Explore Relaton in Data',size: headingTextSize),
+            customText(text: 'Explore Relaton in Data',size: headingTextSize-1,weight:FontWeight.w500),
+            SizedBox(height: 15,),
+              Align(
+                alignment: Alignment(-0.82, 0),
+                child: customText(text: 'Select two columns',size: 17, weight: FontWeight.w400,color: const Color.fromARGB(255, 80, 75, 75)),
+              ),
+
+            SizedBox(height: 6,),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+
+                  customDropDownMenu(
+                    label: 'Column1',
+                    context: context, 
+                    controller: controller, 
+                    columnValues: columnValues, 
+                    onValueSelected: (value)=>setState(() {
+                            column1 = value;
+                            })
+                ),
+                SizedBox(width: 15,),
+                  customDropDownMenu(
+                    label: 'Column2',
+                    context: context, 
+                    controller: controller2, 
+                    columnValues: columnValues, 
+                    onValueSelected: (value)=>setState(() {
+                            column1 = value;
+                            })
+                  ),
+              ],  
+            ),
+            SizedBox(height: 12,),
+            customElevatedButton(
+              text: 'Show Relation', 
+              ypadding: 9,
+              xpadding: screenWidth* 0.22,
+              textsize: 18,
+              textWeight: FontWeight.w500,
+              onPressed: (){}
+              ),
+              SizedBox(height: 15,),
+
             Align(
-              alignment: Alignment.centerLeft,
-              child: customText(text: 'Select two columns',size: 17,),
+              alignment: Alignment(-0.82, 0),
+              child: customText(
+                text: 'Co-Relation Result:  0.766 \nRelation Type:  Positive',
+                size: 14, 
+                weight: FontWeight.w500,
+                color:smallTextColor,
+                lineSpace:2 ,
+                ),
             ),
-            customDropDownMenu(
-              context: context, 
-              controller: controller, 
-              columnValues: columnValues, 
-              selectedValue: selectedValue, 
-              setStateCallback:() {
-                setState(() {
-                });
-              } 
-            ),
-          customDropDownMenu(
-              context: context, 
-              controller: controller, 
-              columnValues: columnValues, 
-              selectedValue: selectedValue, 
-              setStateCallback:() {
-                setState(() {
-                });
-              } 
-            ),
-            
-            
+            SizedBox(height: 10,),
+
+          Align(
+              alignment: Alignment(-0.86, 0),
+              child: customText(text: 'Virtualazation',size: 17, weight: FontWeight.w500),
+              
+           ),
+
+         SizedBox(height: 10,),
+
+          Align(
+              alignment: Alignment(-0.86, 0),
+              child: customText(text: 'Scatter Plot',size: 15, weight: FontWeight.w500,color: smallTextColor),
+              
+           ),
+          Align(
+              alignment: Alignment(-0.86, 0),
+              child: Image.asset(
+                height: 120,
+                width: 250,
+                'assets/images/relation1.png'
+                )
+           ),
+           SizedBox(height: 10,),
+
+          Align(
+              alignment: Alignment(-0.86, 0),
+              child: customText(text: 'Heat Map',size: 15, weight: FontWeight.w500,color: smallTextColor),
+              
+           ),
+          Align(
+              alignment: Alignment(-0.5, 0),
+              child: Image.asset(
+                height: 150,
+                width: 300,
+                'assets/images/relation2.png'
+                ), 
+           ),
+
+          SizedBox(height: 12,),
+            customElevatedButton(
+              text: 'Explore More', 
+              ypadding: 9,
+              xpadding: screenWidth* 0.22,
+              textsize: 18,
+              textWeight: FontWeight.w500,
+              onPressed: (){}
+          ),
+
+
           ],
         ),
       ),
