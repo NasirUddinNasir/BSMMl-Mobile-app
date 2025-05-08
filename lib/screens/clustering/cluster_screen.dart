@@ -1,5 +1,7 @@
 import 'package:analysis_app/screens/overview_screen.dart';
+import 'package:analysis_app/screens/relation_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:analysis_app/screens/clustering/clustering_models.dart';
 import 'package:flutter/material.dart';
 
 class ClusterScreen extends StatelessWidget {
@@ -48,7 +50,7 @@ class ClusterScreen extends StatelessWidget {
                   customOutlinedButton(
                     icon: 'assets/images/Relationship_icon.png',
                     text:'Explore Relation in Data', 
-                    onpressed:(){}
+                    onpressed:()=>navigateToPage(context, RelationScreen())
                     ),   
 
                    SizedBox(height: 18), 
@@ -56,7 +58,7 @@ class ClusterScreen extends StatelessWidget {
                   customOutlinedButton(
                     icon: 'assets/images/cluster_icon.png',
                     text:'Cluster your data', 
-                    onpressed: (){}
+                    onpressed: ()=>navigateToPage(context,ClusteringModelsScreen() )
                     )          
             ],
           ),

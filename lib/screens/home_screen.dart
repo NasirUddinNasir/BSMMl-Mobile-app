@@ -20,11 +20,11 @@ class HomeScreenState extends State<HomeScreen> {
         body: Center(
 
             child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       //crossAxisAlignment: CrossAxisAlignment.center,
 
       children: [
-
+        SizedBox(height: screenHeight*0.08),
 
         Text(
             style: TextStyle(
@@ -84,9 +84,7 @@ class HomeScreenState extends State<HomeScreen> {
   
         ),
 
-        SizedBox(
-          height: 30,
-        )
+       SizedBox(height:screenHeight*0.06,)
 
       ],
     )

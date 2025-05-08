@@ -117,6 +117,7 @@ class OverviewScreenState extends State<OverviewScreen>{
       return Scaffold(
           body:Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
 
                   SizedBox(height: screenHeight*0.040),
