@@ -12,4 +12,5 @@ class GlobalStore {
 
   // The global string variable
   String selectedPredictionModel = "";
+  Map<String, dynamic> csvStats = {};
 }

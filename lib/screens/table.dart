@@ -1,3 +1,4 @@
+import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,6 +22,7 @@ Widget customTable({
             ),
           
            Container(
+                    width: screenWidth,
                      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 3),
                     padding: EdgeInsets.all(6),
                     decoration: BoxDecoration(

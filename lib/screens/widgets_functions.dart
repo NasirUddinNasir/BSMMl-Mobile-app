@@ -149,6 +149,7 @@ void customSnackBar(
     SnackBar(
       content: customText(text: message, size: 15, color: textColor),
       backgroundColor: backgroundColor,
+      duration: Duration(seconds: 1),
     ),
   );
 }
@@ -156,8 +157,8 @@ void customSnackBar(
 
 // Custom Dropdown Menu
 
-void showColumnPicker(BuildContext context, List<String> columnValues, Function(String selected) onSelected) {
-  showModalBottomSheet(
+void showColumnPicker(BuildContext context, List<dynamic> columnValues, Function(String selected) onSelected) {
+ showModalBottomSheet(
     context: context,
     builder: (context) {
       return Container(
@@ -184,7 +185,7 @@ Widget customDropDownMenu({
   required String label,
   required BuildContext context,
   required TextEditingController controller,
-  required List<String> columnValues,
+  required List<dynamic> columnValues,
   required Function(String) onValueSelected, 
 }) {
   return SizedBox(

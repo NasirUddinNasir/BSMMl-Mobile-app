@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:analysis_app/global_state.dart';
 
 
 class RelationScreen extends StatefulWidget{
@@ -11,7 +12,7 @@ class RelationScreen extends StatefulWidget{
 }
 
 class RelationScreenState extends State<RelationScreen>{
-    List<String> columnValues = ["nasir", "ahmad", "hasnain", "jawad", "5", "6", "7"];
+    // List<dynamic> columnValues = GlobalStore().csvStats['columns'];
 
   TextEditingController controller = TextEditingController();
    TextEditingController controller2 = TextEditingController();
@@ -52,7 +53,7 @@ class RelationScreenState extends State<RelationScreen>{
                     label: 'Column1',
                     context: context, 
                     controller: controller, 
-                    columnValues: columnValues, 
+                    columnValues:List<String>.from(GlobalStore().csvStats['columns']), 
                     onValueSelected: (value)=>setState(() {
                             column1 = value;
                             })
@@ -62,7 +63,7 @@ class RelationScreenState extends State<RelationScreen>{
                     label: 'Column2',
                     context: context, 
                     controller: controller2, 
-                    columnValues: columnValues, 
+                    columnValues:List<String>.from(GlobalStore().csvStats['columns']), 
                     onValueSelected: (value)=>setState(() {
                             column1 = value;
                             })
