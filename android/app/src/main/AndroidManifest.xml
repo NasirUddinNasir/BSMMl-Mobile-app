@@ -6,12 +6,15 @@
     
     <!-- Required for Android 11+ -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
-    <application
+
+    <application    
         android:label="analysis_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:requestLegacyExternalStorage="true"> <!-- ✅ Moved inside <application> -->
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true"> 
 
         <activity
             android:name=".MainActivity"

@@ -62,11 +62,6 @@ class OverviewScreenState extends State<OverviewScreen> {
                           'Total columns: ${GlobalStore().csvStats['columns_length']}',
                       size: 15,
                       weight: FontWeight.w500),
-                  customText(
-                      text:
-                          'Total missing values in Data: ${GlobalStore().csvStats['missing_values']}',
-                      size: 15,
-                      weight: FontWeight.w500),
                 ],
               ),
             ),
@@ -77,11 +72,11 @@ class OverviewScreenState extends State<OverviewScreen> {
             height: 12,
           ),
 
-          customTable(
-              missingValues:
-                  GlobalStore().csvStats["missing_values_per_column"],
-              text: 'Missing values in columns'),
-          SizedBox(height: 12),
+          // customTable(
+          //     missingValues:
+          //         GlobalStore().csvStats["missing_values_per_column"],
+          //     text: 'Missing values in columns'),
+          // SizedBox(height: 12),
           customTable(
               missingValues:
                   GlobalStore().csvStats["duplicate_values_per_column"],

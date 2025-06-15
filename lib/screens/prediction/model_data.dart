@@ -1,5 +1,6 @@
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:analysis_app/global_state.dart';
 
 class PredictionModelDataInput extends StatefulWidget {
   const PredictionModelDataInput({super.key});
@@ -11,28 +12,14 @@ class PredictionModelDataInput extends StatefulWidget {
 
 class PredictionModelDataInputState extends State<PredictionModelDataInput> {
   // Define the columns
-  final List<String> columns = [
-    'Age',
-    'Income',
-    'Experience',
-    'Education',
-    'Gender',
-    'Location',
-    'Marital Status',
-    'Credit Score'
-  ];
+  final List<String> columns = List<String>.from(GlobalStore().columnsForPridict);
 
   // Map to store user input values for each column (using Strings)
-  final Map<String, String> columnValues = {
-    'Age': '',
-    'Income': '',
-    'Experience': '',
-    'Education': '',
-    'Gender': '',
-    'Location': '',
-    'Marital Status': '',
-    'Credit Score': ''
+  late final Map<String, String> columnValues = {
+    for (final column in columns) column: ''
   };
+
+  
 
   // Controllers for input fields
   final Map<String, TextEditingController> controllers = {};

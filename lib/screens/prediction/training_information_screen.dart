@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/screens/prediction/model_data.dart';
+import 'package:analysis_app/global_state.dart';
 
 
 class TrainingInformationScreen extends StatefulWidget {
@@ -11,28 +12,25 @@ class TrainingInformationScreen extends StatefulWidget {
 }
 
 class TrainingInformationScreenState extends State<TrainingInformationScreen> {
-  // Dummy data for columns
-  final List<String> allColumns = [
-    'Age',
-    'Income',
-    'Experience',
-    'Education',
-    'Gender',
-    'Location',
-    'Marital Status',
-    'Credit Score'
-  ];
+  // data for columns
+  final List<String> allColumns =List<String>.from(GlobalStore().csvStats['columns']);
   
   // Selected target column
   String? targetColumn;
   
+  
   // Columns selected to be dropped
   final Set<String> columnsToDrop = {};
+  late final List<String> columnsToDropList = columnsToDrop.toList();
+
+  //remaining columns to preict
+  late final List<String> availableColumnsForPredict = allColumns
+    .where((column) => column != targetColumn && !columnsToDrop.contains(column))
+    .toList();
   
   @override
   Widget build(BuildContext context) {
     // Create a list of available columns for dropping
-    // (excluding the target column)
     List<String> availableForDrop = allColumns
         .where((column) => column != targetColumn)
         .toList();
@@ -162,10 +160,12 @@ class TrainingInformationScreenState extends State<TrainingInformationScreen> {
                   child: ElevatedButton(
                     onPressed: targetColumn != null ? () {
                       // Process selected target and columns to drop
+                      GlobalStore().targetColumn = targetColumn!;
+                      GlobalStore().columnsForPridict = availableColumnsForPredict;
+                      navigateToPage(context, PredictionModelDataInput());
+                      print(availableColumnsForPredict);
                       print('Target Column: $targetColumn');
                       print('Columns to Drop: $columnsToDrop');
-                      navigateToPage(context, PredictionModelDataInput());
-                      
                       // Navigate to next screen or process data
                     } : null,
                     style: ElevatedButton.styleFrom(

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:analysis_app/global_state.dart';
 import 'dart:async';
 
 Future<int> uploadCSVFile(File csvFile) async {
@@ -30,7 +29,7 @@ Future<int> uploadCSVFile(File csvFile) async {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      GlobalStore().csvStats = responseData;
+      // GlobalStore().csvStats = responseData;
       print(responseData);
       // print(response.body);
       statusCode = response.statusCode;
