@@ -191,6 +191,13 @@ class RelationScreenState extends State<RelationScreen> {
                         child: zoomableImage(barplotUrl),
                       ),
                     ],
+                    if (!isLoading && !correlationText.isNotEmpty) ...[
+                      Center(
+                          child: Padding(
+                              padding: EdgeInsets.only(top: screenHeight * 0.15),
+                              child:
+                                  Text("Please select two columns to begin")))
+                    ]
                   ],
                 ),
               ),

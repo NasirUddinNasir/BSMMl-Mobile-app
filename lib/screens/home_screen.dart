@@ -5,7 +5,6 @@ import 'package:analysis_app/screens/upload_screen.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
 
-
   final String title;
 
   @override
@@ -15,80 +14,155 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        body: Center(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30),
 
-            child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //crossAxisAlignment: CrossAxisAlignment.center,
+                      // Title
+                      Text(
+                        "BSMML",
+                        style: TextStyle(
+                          fontSize: headingTextSize,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "(Basic Statistics & Models for Machine Learning)",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black87,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
 
-      children: [
-        SizedBox(height: screenHeight*0.08),
+                      const SizedBox(height: 25),
 
-        Text(
-            style: TextStyle(
-                fontSize: headingTextSize, fontWeight: FontWeight.w500, color: Colors.black),
-            textAlign: TextAlign.center,
-            "Analyse, Virtualize & \n Clusterering"
-            ),
+                      // Image with Shadow Box
+                      Container(
+                        height: screenHeight * 0.28,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          // boxShadow: const [
+                          //   BoxShadow(
+                          //     color: Colors.black26,
+                          //     blurRadius: 10,
+                          //     spreadRadius: 0.5,
+                          //     offset: Offset(0, 1),
+                          //   ),
+                          // ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            "assets/images/data_preprocessing.png",
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
 
-        
+                      const SizedBox(height: 30),
 
-        Image.asset(
-          "assets/images/homeimg.png",
-          height: screenHeight*0.34,
-          width:  screenHeight*0.34,
-        ),
+                      // Description Text
+                      customText(
+                        weight: FontWeight.w400,
+                        alignText: TextAlign.justify,
+                        size: 16,
+                        color: const Color.fromARGB(255, 110, 107, 107),
+                        text:
+                            "BSMML helps you explore datasets, uncover insights, and train ML models – perfect for students and beginners in data science.",
+                      ),
 
-        Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                      const SizedBox(height: 12),
 
-                  customText(
-                      weight:FontWeight.w300,
-                      alignText: TextAlign.justify,
-                      size: 15,
-                      color: const Color.fromARGB(255, 110, 107, 107),
-                      text:
-                          "Discover patterns and insights hidden in your data.Visualize trends, group information, and predict outcomes effortlessly. Simplify complex data analysis with easy-to-understand visuals. Make smarter decisions with clarity and confidence."
+                      // Features
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '✨ Upload CSV datasets',
+                          ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '📊 View descriptive statistics',
+                          ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '📈 Visualize trends and correlations',
+                          ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '🔍 Perform clustering on unlabeled data',
+                          ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '🤖 Train models & make predictions',
+                          ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '⚙️ Adjust ML parameters for better results',
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+
+                      // Get Started Button
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: customElevatedButton(
+                          xpadding: screenWidth * 0.25,
+                          ypadding: screenHeight * 0.015,
+                          text: "Get Started",
+                          onPressed: () =>
+                              navigateToPage(context, CSVUploader()),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 12,),
-                  customText(
-                    weight:FontWeight.w400,
-                    color: const Color.fromARGB(255, 110, 107, 107),
-                    lineSpace: 1.5,
-                    size: 15,
-                    text:
-                    '* Analyse your data\n'
-                    '* Make Clusters\n'
-                    '* Train Model and Make Prediction\n' 
-                    '* Get Statical summaries'
-                  )
-
-                ],
-              )
-          ),
-
-        SizedBox(
-            height: 40,
-          ),
-
-          customElevatedButton(
-            xpadding: screenWidth*0.244,
-            ypadding: screenHeight*0.012,
-            text: "Get Started", 
-            onPressed: ()=>navigateToPage(context,CSVUploader())
-  
+                ),
+              ),
+            );
+          },
         ),
-
-       SizedBox(height:screenHeight*0.06,)
-
-      ],
-    )
-   )
-  );
+      ),
+    );
   }
 }

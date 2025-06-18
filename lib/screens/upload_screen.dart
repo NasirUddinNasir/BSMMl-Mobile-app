@@ -1,23 +1,20 @@
 import 'dart:io';
+import 'package:analysis_app/screens/explore_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/api/upload.dart';
-import 'package:analysis_app/screens/missing_value_handler.dart';
+import 'package:analysis_app/api/handle_overview.dart';
 import 'package:analysis_app/global_state.dart';
 
 class CSVUploader extends StatefulWidget {
-  const CSVUploader({
-    super.key,
-  });
+  const CSVUploader({super.key});
 
   @override
   CSVUploaderState createState() => CSVUploaderState();
 }
 
 class CSVUploaderState extends State<CSVUploader> {
-  //Datatype selection control variables
-  String? predictORcluster;
   File? csvFile;
   String fileLastName = '';
   bool isUploading = false;
@@ -32,7 +29,6 @@ class CSVUploaderState extends State<CSVUploader> {
       if (result != null) {
         PlatformFile file = result.files.first;
 
-        // Check if the selected file has a .csv extension
         if (file.extension == "csv") {
           File pickedCSVFile = File(file.path!);
           String lastName = File(file.path!).uri.pathSegments.last;
@@ -45,7 +41,7 @@ class CSVUploaderState extends State<CSVUploader> {
           setState(() {
             isUploading = false;
           });
-          // ✅ Show success message
+
           if (mounted) {
             if (statusCode == 200) {
               setState(() {
@@ -60,7 +56,7 @@ class CSVUploaderState extends State<CSVUploader> {
             } else if (statusCode == 408) {
               customSnackBar(
                 context,
-                message: 'Time out check your internet!',
+                message: 'Time out, check your internet!',
                 backgroundColor: Colors.red,
               );
             } else {
@@ -72,7 +68,6 @@ class CSVUploaderState extends State<CSVUploader> {
             }
           }
         } else {
-          // ❌ Show error if not CSV
           if (mounted) {
             customSnackBar(
               context,
@@ -82,7 +77,6 @@ class CSVUploaderState extends State<CSVUploader> {
           }
         }
       } else {
-        // 🟠 Show message when user cancels file selection
         if (mounted) {
           customSnackBar(
             context,
@@ -92,7 +86,6 @@ class CSVUploaderState extends State<CSVUploader> {
         }
       }
     } catch (e) {
-      // 🔴 Handle unexpected errors
       if (mounted) {
         customSnackBar(
           context,
@@ -117,77 +110,36 @@ class CSVUploaderState extends State<CSVUploader> {
                   child: iconButton(context),
                 ),
                 SizedBox(height: screenHeight * 0.010),
+
+                // 🔹 App Info Card
                 Card(
                   margin: EdgeInsets.symmetric(horizontal: 19),
                   elevation: 1,
                   color: const Color.fromARGB(255, 250, 253, 252),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: sumWH * 0.02, vertical: sumWH * 0.01),
+                        horizontal: sumWH * 0.02, vertical: sumWH * 0.02),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         customText(
-                            text: "Select what you want to do:",
-                            size: 20,
-                            weight: FontWeight.w500),
-                        RadioListTile(
-                            fillColor: WidgetStateProperty.resolveWith<Color>(
-                              (Set<WidgetState> states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  return Colors.blue;
-                                }
-                                return smallTextColor;
-                              },
-                            ),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 28),
-                            visualDensity:
-                                VisualDensity(horizontal: -4, vertical: -4),
-                            title: customText(
-                                text: 'Make Predictions',
-                                color: smallTextColor,
-                                weight: FontWeight.w500,
-                                size: 18),
-                            value: 'Make Predictions',
-                            groupValue: predictORcluster,
-                            onChanged: (newvalue) => setState(() {
-                                  predictORcluster = newvalue as String;
-                                })),
-                        Transform.translate(
-                          offset: Offset(0, -4),
-                          child: RadioListTile(
-                            visualDensity:
-                                VisualDensity(horizontal: -4, vertical: -1),
-                            fillColor: WidgetStateProperty.resolveWith<Color>(
-                              (Set<WidgetState> states) {
-                                if (states.contains(WidgetState.selected)) {
-                                  return Colors.blue;
-                                }
-                                return smallTextColor;
-                              },
-                            ),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 28),
-                            title: customText(
-                                text: "Make Clusters",
-                                color: smallTextColor,
-                                weight: FontWeight.w500,
-                                size: 18),
-                            value: 'Make Clusters',
-                            groupValue: predictORcluster,
-                            onChanged: (newvalue) => setState(() {
-                              predictORcluster = newvalue as String;
-                            }),
-                          ),
+                          text: "📊    B S M M L",
+                          size: 19,
+                          weight: FontWeight.w600,
+                        ),
+                        SizedBox(height: 6),
+                        customText(
+                          text:
+                              "Upload your CSV dataset to begin exploring, cleaning, and analyzing your data on your mobile phone.",
+                          size: 14,
+                          color: Colors.grey,
                         ),
                       ],
                     ),
                   ),
                 ),
+
                 SizedBox(height: 35),
-                SizedBox(height: 5),
                 Card(
                   elevation: 2,
                   color: const Color.fromARGB(255, 250, 253, 252),
@@ -213,7 +165,7 @@ class CSVUploaderState extends State<CSVUploader> {
                       textColor: smallTextColor,
                       xpadding: screenWidth * 0.08,
                       ypadding: screenHeight * 0.01,
-                      text: "Upload csv file",
+                      text: "Upload CSV file",
                       onPressed: _pickCSVFile,
                       icon: Icons.upload,
                       backgroundColor: const Color.fromARGB(255, 52, 159, 173),
@@ -223,30 +175,24 @@ class CSVUploaderState extends State<CSVUploader> {
                 ),
                 SizedBox(height: screenHeight * 0.05),
                 customElevatedButton(
-                    xpadding: screenWidth * 0.260,
-                    ypadding: screenHeight * 0.012,
-                    text: "Proceed ->",
-                    textsize: 20,
-                    onPressed: () {
-                      if (csvFile != null && predictORcluster != null) {
-                        GlobalStore().selectedCatagory = predictORcluster!;
-                        navigateToPage(context, HandleMissingValuesScreen());
-                      } else {
-                        if (predictORcluster == null) {
-                          customSnackBar(
-                            context,
-                            message: 'Please select an option fist',
-                            backgroundColor: Colors.orange,
-                          );
-                        } else {
-                          customSnackBar(
-                            context,
-                            message: 'Please upload a CSV file to Continue',
-                            backgroundColor: Colors.orange,
-                          );
-                        }
-                      }
-                    }),
+                  xpadding: screenWidth * 0.260,
+                  ypadding: screenHeight * 0.012,
+                  text: "Proceed ➝",
+                  textsize: 20,
+                  onPressed: () {
+                    if (csvFile != null) {
+                      handleOverview(context);
+                      navigateToPage(context, ExploreScreen());
+                    } else {
+                      customSnackBar(
+                        context,
+                        message: 'Please upload a CSV file to continue',
+                        backgroundColor: Colors.orange,
+                      );
+                    }
+                  },
+                ),
+                IconButton(onPressed: ()=>print(GlobalStore().csvStats['duplicate_rows_count']), icon: Icon(Icons.arrow_back))
               ],
             ),
           ),
