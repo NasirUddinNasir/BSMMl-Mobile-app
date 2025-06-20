@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/preprocessin_screens/encoding_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,8 @@ class FixDataTypesScreen extends StatefulWidget {
 }
 
 class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
-  final String getTypesUrl = 'http://10.0.2.2:8000/get-data-types';
-  final String fixTypesUrl = 'http://10.0.2.2:8000/fix-data-types';
+  final String getTypesUrl = '$baseUrl/get-data-types';
+  final String fixTypesUrl = '$baseUrl/fix-data-types';
 
   Map<String, String> currentTypes = {};
   Map<String, String> selectedTypes = {};

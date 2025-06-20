@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ class EncodeScreen extends StatefulWidget {
 }
 
 class _EncodeScreenState extends State<EncodeScreen> {
-  final String getColumnsUrl = "http://10.0.2.2:8000/get-categorical-columns";
-  final String applyEncodingUrl = "http://10.0.2.2:8000/encode-columns";
+  final String getColumnsUrl = "$baseUrl/get-categorical-columns";
+  final String applyEncodingUrl = "$baseUrl/encode-columns";
 
   Map<String, String> categoricalColumns = {};
   Set<String> selectedColumns = {};

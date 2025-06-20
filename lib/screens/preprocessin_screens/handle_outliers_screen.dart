@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/preprocessin_screens/feature_selection_screen.dart';
@@ -13,8 +14,8 @@ class HandleOutliersScreen extends StatefulWidget {
 }
 
 class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
-  final String getOutliersUrl = "http://10.0.2.2:8000/get-outliers";
-  final String handleOutliersUrl = "http://10.0.2.2:8000/handle-outliers";
+  final String getOutliersUrl = "$baseUrl/get-outliers";
+  final String handleOutliersUrl = "$baseUrl/handle-outliers";
 
   List<Map<String, dynamic>> outliers = [];
   bool isLoading = true;

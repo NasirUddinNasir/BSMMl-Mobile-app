@@ -1,8 +1,10 @@
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:analysis_app/global_state.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/api/relation_helper.dart';
 import 'package:analysis_app/components/image_zooming.dart';
+import 'package:analysis_app/api/base_url.dart';
 
 class RelationScreen extends StatefulWidget {
   const RelationScreen({super.key});
@@ -25,8 +27,6 @@ class RelationScreenState extends State<RelationScreen> {
   String barplotUrl = "";
   bool isLoading = false;
 
-  final String backendBaseUrl = 'http://10.0.2.2:8000';
-
   void showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -41,7 +41,7 @@ class RelationScreenState extends State<RelationScreen> {
     RelationHelper.fetchRelationData(
       column1: column1,
       column2: column2,
-      backendBaseUrl: backendBaseUrl,
+      backendBaseUrl: baseUrl,
       setLoading: (value) => setState(() => isLoading = value),
       onError: (message) {
         setState(() => correlationText = "");
@@ -65,7 +65,6 @@ class RelationScreenState extends State<RelationScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Section: Fixed Header and Dropdowns
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
               child: Column(
@@ -194,7 +193,8 @@ class RelationScreenState extends State<RelationScreen> {
                     if (!isLoading && !correlationText.isNotEmpty) ...[
                       Center(
                           child: Padding(
-                              padding: EdgeInsets.only(top: screenHeight * 0.15),
+                              padding:
+                                  EdgeInsets.only(top: screenHeight * 0.15),
                               child:
                                   Text("Please select two columns to begin")))
                     ]
@@ -208,13 +208,12 @@ class RelationScreenState extends State<RelationScreen> {
 
       // Bottom Button
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 30, left: 35, right: 35),
-        child: customElevatedButton(
-          text: 'Explore More',
-          ypadding: screenHeight * 0.0132,
-          textsize: 18,
-          textWeight: FontWeight.w500,
-          onPressed: () {},
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: IconButton(
+          icon: Icon(Icons.home),
+          color: const Color.fromARGB(255, 17, 57, 143),
+          iconSize: 35,
+          onPressed: () => navigateToPage(context, CSVUploader()),
         ),
       ),
     );

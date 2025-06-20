@@ -29,7 +29,7 @@ class ClusteringResultState extends State<ClusteringResult> {
   }
 
   Future<void> fetchClusteringData() async {
-    // TODO: Replace with real HTTP call to FastAPI
+    //Replace with real HTTP call to FastAPI
     await Future.delayed(const Duration(seconds: 1)); // Simulate delay
 
     setState(() {
@@ -176,7 +176,7 @@ class ClusteringResultState extends State<ClusteringResult> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: Implement export functionality
+                        // Implement export functionality
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0A3779),

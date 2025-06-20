@@ -163,9 +163,9 @@ class TrainingInformationScreenState extends State<TrainingInformationScreen> {
                       GlobalStore().targetColumn = targetColumn!;
                       GlobalStore().columnsForPridict = availableColumnsForPredict;
                       navigateToPage(context, PredictionModelDataInput());
-                      print(availableColumnsForPredict);
-                      print('Target Column: $targetColumn');
-                      print('Columns to Drop: $columnsToDrop');
+                      // print(availableColumnsForPredict);
+                      // print('Target Column: $targetColumn');
+                      // print('Columns to Drop: $columnsToDrop');
                       // Navigate to next screen or process data
                     } : null,
                     style: ElevatedButton.styleFrom(

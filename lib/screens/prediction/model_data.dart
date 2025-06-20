@@ -67,11 +67,11 @@ class PredictionModelDataInputState extends State<PredictionModelDataInput> {
     });
 
     // Print values for debugging
-    print('Column Values:');
+    // print('Column Values:');
     columnValues.forEach((key, value) {
-      print('$key: $value');
+      // print('$key: $value');
     });
-    print('Predicted Value: $predictedValue');
+    // print('Predicted Value: $predictedValue');
   }
 
   @override

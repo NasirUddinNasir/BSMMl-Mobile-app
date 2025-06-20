@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/api/upload.dart';
-import 'package:analysis_app/api/handle_overview.dart';
-import 'package:analysis_app/global_state.dart';
 
 class CSVUploader extends StatefulWidget {
   const CSVUploader({super.key});
@@ -181,7 +179,6 @@ class CSVUploaderState extends State<CSVUploader> {
                   textsize: 20,
                   onPressed: () {
                     if (csvFile != null) {
-                      handleOverview(context);
                       navigateToPage(context, ExploreScreen());
                     } else {
                       customSnackBar(
@@ -192,7 +189,6 @@ class CSVUploaderState extends State<CSVUploader> {
                     }
                   },
                 ),
-                IconButton(onPressed: ()=>print(GlobalStore().csvStats['duplicate_rows_count']), icon: Icon(Icons.arrow_back))
               ],
             ),
           ),

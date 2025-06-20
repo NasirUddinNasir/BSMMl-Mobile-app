@@ -405,7 +405,7 @@ class ClusteringModelsScreenState extends State<ClusteringModelsScreen> {
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(8),
-                          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
+                          color: isSelected ? Colors.blue.shade100 : Colors.white,
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         child: Text(
@@ -465,8 +465,8 @@ class ClusteringModelsScreenState extends State<ClusteringModelsScreen> {
                     onPressed: selectedAlgorithm != null
                         ? () {
                             // Process selected algorithm and parameters
-                            print('Selected Algorithm: $selectedAlgorithm');
-                            print('Parameters: $modelParameters');
+                            // print('Selected Algorithm: $selectedAlgorithm');
+                            // print('Parameters: $modelParameters');
                             
                            navigateToPage(context, ClusteringResult());
                           }

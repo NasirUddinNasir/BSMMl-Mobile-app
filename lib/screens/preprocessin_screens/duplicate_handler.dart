@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +13,7 @@ class RemoveDuplicatesScreen extends StatefulWidget {
 }
 
 class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
-  final String apiUrl = 'http://10.0.2.2:8000/remove-duplicates';
+  final String apiUrl = '$baseUrl/remove-duplicates';
   List<Map<String, dynamic>> previewData = [];
   bool isLoading = true;
   String message = '';

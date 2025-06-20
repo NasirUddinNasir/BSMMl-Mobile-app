@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/home_screen.dart';
@@ -14,8 +15,8 @@ class FeatureSelectionScreen extends StatefulWidget {
 }
 
 class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
-  final String getFeaturesUrl = "http://10.0.2.2:8000/get-features";
-  final String dropFeaturesUrl = "http://10.0.2.2:8000/drop-features";
+  final String getFeaturesUrl = "$baseUrl/get-features";
+  final String dropFeaturesUrl = "$baseUrl/drop-features";
 
   List<String> allFeatures = [];
   Set<String> selectedFeatures = {};
@@ -51,7 +52,8 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
     if (selectedFeatures.isEmpty) {
       navigateToPage(
         context,
-        DataPreviewScreen(buttontext: "Home", nextScreen: const HomeScreen(title: "")),
+        DataPreviewScreen(
+            buttontext: "Home", nextScreen: const HomeScreen(title: "")),
       );
       return;
     }
@@ -107,21 +109,27 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GestureDetector(
-                        onTap: () => downloadCleanedCSV(context),
-                        child: const Text(
-                          "Want to download the clean data? Click here",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                            fontSize: 15,
-                          ),
-                        ),
+                      Row(
+                        children: [
+                          Text("Want to download the clean data?  "),
+                          GestureDetector(
+                            onTap: () => downloadCleanedCSV(context),
+                            child: const Text(
+                              "Touch here",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                                fontSize: 15,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 20),
                       const Text(
                         "Select features to drop",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 12),
                       Expanded(
@@ -161,7 +169,9 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                       if (featuresDropped || noFeatures) {
                         navigateToPage(
                           context,
-                          DataPreviewScreen(buttontext: "Home", nextScreen: const HomeScreen(title: "")),
+                          DataPreviewScreen(
+                              buttontext: "Home",
+                              nextScreen: const HomeScreen(title: "")),
                         );
                       } else {
                         dropSelectedFeatures();

@@ -3,6 +3,7 @@ import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/preprocessin_screens/duplicate_handler.dart';
+import 'package:analysis_app/api/base_url.dart';
 
 class HandleMissingValuesScreen extends StatefulWidget {
   const HandleMissingValuesScreen({super.key});
@@ -13,7 +14,7 @@ class HandleMissingValuesScreen extends StatefulWidget {
 }
 
 class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
-  final String baseUrl = 'http://10.0.2.2:8000';
+
 
   List<dynamic> missingSummary = [];
   Map<String, Map<String, dynamic>> selectedStrategies = {};

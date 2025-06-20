@@ -32,7 +32,6 @@ class RelationHelper {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print(response.body);
 
         String correlationText;
         String dataType = data['type'];
@@ -48,7 +47,6 @@ class RelationHelper {
         } else {
           correlationText = "Non-numeric data. Showing barplot.";
           barplotUrl = '$backendBaseUrl${data['barplot_url']}';
-          print(barplotUrl);
         }
 
         onSuccess(correlationText, dataType, heatmapUrl, scatterUrl, barplotUrl);

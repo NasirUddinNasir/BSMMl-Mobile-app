@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/preprocessin_screens/handle_outliers_screen.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
@@ -13,8 +14,8 @@ class NormalizeScreen extends StatefulWidget {
 }
 
 class _NormalizeScreenState extends State<NormalizeScreen> {
-  final String getNumericalColumnsUrl = "http://10.0.2.2:8000/get-numerical-columns";
-  final String normalizeColumnsUrl = "http://10.0.2.2:8000/normalize-columns";
+  final String getNumericalColumnsUrl = "$baseUrl/get-numerical-columns";
+  final String normalizeColumnsUrl = "$baseUrl/normalize-columns";
 
   Map<String, String> numericalColumns = {};
   Set<String> selectedColumns = {};

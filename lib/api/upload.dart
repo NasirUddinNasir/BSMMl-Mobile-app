@@ -5,11 +5,12 @@ import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:async';
 import "package:analysis_app/global_state.dart";
+import "package:analysis_app/api/base_url.dart";
 
 Future<int> uploadCSVFile(File csvFile) async {
   int statusCode = 0;
   try {
-    final uri = Uri.parse("http://10.0.2.2:8000/api/upload-csv/");
+    final uri = Uri.parse("$baseUrl/api/upload-csv/");
     final mimeType = lookupMimeType(csvFile.path);
 
     var request = http.MultipartRequest("POST", uri);
@@ -31,7 +32,6 @@ Future<int> uploadCSVFile(File csvFile) async {
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       GlobalStore().csvStats = responseData;
-      print(responseData);
       // print(response.body);
       statusCode = response.statusCode;
     } 
@@ -42,7 +42,6 @@ Future<int> uploadCSVFile(File csvFile) async {
     statusCode = 408;
   } catch (e) {
     statusCode =1;
-  print(e);
   }
   // print("status code returned is: $statusCode");
   return statusCode;

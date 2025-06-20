@@ -35,7 +35,7 @@ class HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           fontSize: headingTextSize,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: const Color.fromARGB(255, 17, 57, 143),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -57,14 +57,6 @@ class HomeScreenState extends State<HomeScreen> {
                         height: screenHeight * 0.28,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          // boxShadow: const [
-                          //   BoxShadow(
-                          //     color: Colors.black26,
-                          //     blurRadius: 10,
-                          //     spreadRadius: 0.5,
-                          //     offset: Offset(0, 1),
-                          //   ),
-                          // ],
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
@@ -144,13 +136,18 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                       const Spacer(),
 
-                      // Get Started Button
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: customElevatedButton(
-                          xpadding: screenWidth * 0.25,
-                          ypadding: screenHeight * 0.015,
-                          text: "Get Started",
+                        padding: const EdgeInsets.only(bottom: 40),
+                        child: RawMaterialButton(
+                          elevation: 2.0,
+                          fillColor: const Color.fromARGB(255, 17, 57, 143),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(15.0),
+                          child: const Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                            size: 28.0,
+                          ),
                           onPressed: () =>
                               navigateToPage(context, CSVUploader()),
                         ),
