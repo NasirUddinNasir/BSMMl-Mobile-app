@@ -30,10 +30,12 @@ class _EncodeScreenState extends State<EncodeScreen> {
   }
 
   Future<void> fetchCategoricalColumns() async {
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      selectedColumns.clear(); 
+    });
     try {
       final response = await http.get(Uri.parse(getColumnsUrl));
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final Map<String, dynamic> columns = data['categorical_columns'];
@@ -49,11 +51,6 @@ class _EncodeScreenState extends State<EncodeScreen> {
   }
 
   Future<void> applyEncoding() async {
-    if (selectedColumns.isEmpty) {
-      navigateToPage(context, DataPreviewScreen(buttontext: "Next, Normalize data", nextScreen: NormalizeScreen()));
-      return;
-    }
-
     setState(() => isProcessing = true);
 
     try {
@@ -66,28 +63,37 @@ class _EncodeScreenState extends State<EncodeScreen> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        setState(() => encodingDone = true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Encoding completed")),
         );
+        setState(() {
+          encodingDone = true;
+        });
+        await fetchCategoricalColumns();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Encoding failed")),
         );
       }
     } catch (e) {
-      debugPrint("Encoding error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("An error occurred")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("An error occurred")),
+        );
+      }
     } finally {
-      setState(() => isProcessing = false);
+      if (mounted) {
+        setState(() => isProcessing = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final noColumns = categoricalColumns.isEmpty;
+    final bool noColumnsLeft = categoricalColumns.isEmpty;
+    final bool shouldNormalize = selectedColumns.isEmpty || (encodingDone || categoricalColumns.isEmpty);
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -102,72 +108,119 @@ class _EncodeScreenState extends State<EncodeScreen> {
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : noColumns
-              ? const Center(child: Text("Data is all set,no encoding needed"))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
-                    children: [
-                      const Text(
-                        "Select columns to apply one-hot-encoding",
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: noColumnsLeft
+                  ? const Center(
+                      child: Text(
+                        "🎉 Good News!\n\nAll categorical columns are encoded.",
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 52, 158, 56),
+                          letterSpacing: 0.5,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 12),
-                      ...categoricalColumns.keys.map((col) {
-                        return CheckboxListTile(
-                          title: Text(col),
-                          value: selectedColumns.contains(col),
-                          onChanged: (selected) {
-                            setState(() {
-                              if (selected == true) {
-                                selectedColumns.add(col);
-                              } else {
-                                selectedColumns.remove(col);
-                              }
-                            });
-                          },
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: isProcessing
-                  ? null
-                  : () {
-                      if (encodingDone || noColumns) {
-                        navigateToPage(context, DataPreviewScreen(buttontext: "Next, Normalize data", nextScreen: NormalizeScreen()));
-                      } else {
-                        applyEncoding();
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: isProcessing
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      (encodingDone || noColumns)
-                          ? "Preview data"
-                          : "Apply Encoding",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+                    )
+                  : ListView(
+                      children: [
+                        const Text(
+                          "Select columns to apply one-hot-encoding",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        ...categoricalColumns.keys.map((col) {
+                          return CheckboxListTile(
+                            title: Text(col),
+                            value: selectedColumns.contains(col),
+                            onChanged: (selected) {
+                              setState(() {
+                                if (selected == true) {
+                                  selectedColumns.add(col);
+                                } else {
+                                  selectedColumns.remove(col);
+                                }
+                                // Reset encodingDone if user interacts again
+                                encodingDone = false;
+                              });
+                            },
+                          );
+                        }),
+                      ],
                     ),
             ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          child: Row(
+            children: [
+              // 👈 Preview Button
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // 👉 Main Action Button
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: isProcessing
+                      ? null
+                      : () {
+                          if (shouldNormalize) {
+                            navigateToPage(context, NormalizeScreen());
+                          } else {
+                            applyEncoding();
+                          }
+                        },
+                  icon: isProcessing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.blue,
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward),
+                  label: Text(
+                    shouldNormalize ? "Normalize" : "Apply Encoding",
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

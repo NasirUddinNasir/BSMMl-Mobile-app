@@ -59,7 +59,7 @@ class SplashScreenState extends State<SplashScreen> {
               SizedBox(height: 28,),
               Text(
                  "Your Data Your Insights",
-                 style: TextStyle(fontSize: 41, 
+                 style: TextStyle(fontSize: 35, 
                                   color: Colors.white, 
                                   fontWeight:FontWeight.w500,
                                   letterSpacing: 1.5,

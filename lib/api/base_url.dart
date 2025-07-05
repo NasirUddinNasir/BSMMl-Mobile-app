@@ -1,3 +1,3 @@
-final String baseUrl = "https://7a06-118-107-133-146.ngrok-free.app";
+final String baseUrl = "http://10.0.2.2:8000";
 
 

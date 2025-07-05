@@ -30,7 +30,11 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
   }
 
   Future<void> fetchNumericalColumns() async {
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      selectedColumns.clear();
+    });
+
     try {
       final response = await http.get(Uri.parse(getNumericalColumnsUrl));
       if (response.statusCode == 200) {
@@ -48,12 +52,8 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
   }
 
   Future<void> normalizeSelectedColumns() async {
-    if (selectedColumns.isEmpty) {
-       navigateToPage(context, DataPreviewScreen(buttontext: "Next, handle outliers", nextScreen: HandleOutliersScreen()));
-      return;
-    }
-
     setState(() => isProcessing = true);
+
     try {
       final response = await http.post(
         Uri.parse(normalizeColumnsUrl),
@@ -64,28 +64,39 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        setState(() => normalizationDone = true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Normalization completed")),
-        );
+        if (mounted) {
+          setState(() => normalizationDone = true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Normalization completed")),
+          );
+        }
+        await fetchNumericalColumns();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Normalization failed")),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Normalization failed")),
+          );
+        }
       }
     } catch (e) {
       debugPrint("Normalization error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("An error occurred")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("An error occurred")),
+        );
+      }
     } finally {
-      setState(() => isProcessing = false);
+      if (mounted) {
+        setState(() => isProcessing = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final noColumns = numericalColumns.isEmpty;
+    final showHandleOutlierButton =
+        normalizationDone || noColumns || selectedColumns.isEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -98,14 +109,26 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : noColumns
-              ? const Center(child: Text("All numerical data is normalized" ,style:TextStyle(fontSize: 20),))
+              ? const Center(
+                  child: Text(
+                    "All numerical data is already normalized.",
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Color.fromARGB(255, 52, 158, 56),
+                      letterSpacing: 0.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
               : Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ListView(
                     children: [
                       const Text(
                         "Select numerical columns to normalize",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 12),
                       ...numericalColumns.keys.map((col) {
@@ -119,6 +142,7 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                               } else {
                                 selectedColumns.remove(col);
                               }
+                              normalizationDone = false;
                             });
                           },
                         );
@@ -128,35 +152,74 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: isProcessing
-                  ? null
-                  : () {
-                      if (normalizationDone || noColumns) {
-                        navigateToPage(context, DataPreviewScreen(buttontext: "Next, handle outliers", nextScreen: HandleOutliersScreen()));
-                      } else {
-                        normalizeSelectedColumns();
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          child: Row(
+            children: [
+              // 👈 Preview Button
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
                 ),
               ),
-              child: isProcessing
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      (normalizationDone || noColumns)
-                          ? "Preview Data"
-                          : "Apply Normalization",
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+              const SizedBox(width: 12),
+
+              // 👉 Main Action Button
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: isProcessing
+                      ? null
+                      : () {
+                          if (showHandleOutlierButton) {
+                            navigateToPage(context, HandleOutliersScreen());
+                          } else {
+                            normalizeSelectedColumns();
+                          }
+                        },
+                  icon: isProcessing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward),
+                  label: Text(
+                    showHandleOutlierButton
+                        ? "Handle Outliers"
+                        : "Apply Normalization",
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-            ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

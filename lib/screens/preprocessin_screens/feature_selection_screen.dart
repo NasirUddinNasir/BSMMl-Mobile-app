@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/screens/home_screen.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/components/download_csv_file.dart';
+import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
 
 class FeatureSelectionScreen extends StatefulWidget {
   const FeatureSelectionScreen({super.key});
@@ -31,7 +31,10 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
   }
 
   Future<void> fetchFeatures() async {
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      selectedFeatures.clear(); // reset selection
+    });
     try {
       final response = await http.get(Uri.parse(getFeaturesUrl));
       if (response.statusCode == 200) {
@@ -50,11 +53,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
 
   Future<void> dropSelectedFeatures() async {
     if (selectedFeatures.isEmpty) {
-      navigateToPage(
-        context,
-        DataPreviewScreen(
-            buttontext: "Home", nextScreen: const HomeScreen(title: "")),
-      );
+      navigateToPage(context, const MLTypeSelectionScreen());
       return;
     }
 
@@ -69,16 +68,20 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        setState(() => featuresDropped = true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Selected features dropped.")),
         );
+        setState(() {
+          featuresDropped = true;
+        });
+        await fetchFeatures();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to drop features.")),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       debugPrint("Drop features error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("An error occurred")),
@@ -103,7 +106,40 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : noFeatures
-              ? const Center(child: Text("No features available to drop"))
+              ? Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '⚠️ No Features Remaining',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 183, 28, 28),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'No features found.\nHave you dropped all features accidentally?',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black87,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ))
               : Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -111,7 +147,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                     children: [
                       Row(
                         children: [
-                          Text("Want to download the clean data?  "),
+                          const Text("Want to download the clean data?  "),
                           GestureDetector(
                             onTap: () => downloadCleanedCSV(context),
                             child: const Text(
@@ -147,6 +183,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                                   } else {
                                     selectedFeatures.remove(feature);
                                   }
+                                  featuresDropped = false;
                                 });
                               },
                             );
@@ -158,40 +195,79 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: isProcessing
-                  ? null
-                  : () {
-                      if (featuresDropped || noFeatures) {
-                        navigateToPage(
-                          context,
-                          DataPreviewScreen(
-                              buttontext: "Home",
-                              nextScreen: const HomeScreen(title: "")),
-                        );
-                      } else {
-                        dropSelectedFeatures();
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          child: Row(
+            children: [
+              // Preview button
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, const DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
                 ),
               ),
-              child: isProcessing
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      (featuresDropped || noFeatures)
-                          ? "Preview Data"
-                          : "Drop Selected Features",
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+              const SizedBox(width: 12),
+
+              // Main button
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: isProcessing || allFeatures.length < 2
+                      ? null
+                      : () {
+                          if (featuresDropped || noFeatures) {
+                            navigateToPage(
+                                context, const MLTypeSelectionScreen());
+                          } else {
+                            dropSelectedFeatures();
+                          }
+                        },
+                  icon: isProcessing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward),
+                  label: Text(
+                    allFeatures.length < 2
+                        ? "Need 2+ features"
+                        : (featuresDropped || noFeatures)
+                            ? "Next"
+                            : (selectedFeatures.isEmpty
+                                ? "Next"
+                                : "Drop Selected Features"),
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-            ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

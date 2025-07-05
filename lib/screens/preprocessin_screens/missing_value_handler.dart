@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/preprocessin_screens/duplicate_handler.dart';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
 
 class HandleMissingValuesScreen extends StatefulWidget {
   const HandleMissingValuesScreen({super.key});
@@ -14,8 +15,6 @@ class HandleMissingValuesScreen extends StatefulWidget {
 }
 
 class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
-
-
   List<dynamic> missingSummary = [];
   Map<String, Map<String, dynamic>> selectedStrategies = {};
   List<dynamic> cleanedPreview = [];
@@ -81,7 +80,10 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
         setState(() {
           cleanedPreview = result['preview'];
         });
+
         showSnack('Data cleaned successfully!');
+
+        await fetchMissingInfo();
       } else {
         showSnack('Failed to clean data');
       }
@@ -101,8 +103,8 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: const Text('Handle Missing Values',
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20)),
+        title:
+            const Text('Handle Missing Values', style: TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
       ),
       body: isLoading
@@ -116,13 +118,19 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
+                        color: Colors.green.shade50,
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade300),
                       ),
                       child: const Text(
-                        'Your data is all set. No missing values found.',
+                        '🎉 Good News!\n\nYour data is all set. No missing values found.',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 45, 148, 49),
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -213,72 +221,60 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                     ),
                   ),
                 ),
-                if (cleanedPreview.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Cleaned Data Preview:',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800)),
-                  ),
-                if (cleanedPreview.isNotEmpty)
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.shade200),
-                      ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: SingleChildScrollView(
-                          child: DataTable(
-                            headingRowColor:
-                                WidgetStateProperty.all(Colors.blue.shade100),
-                            columns: cleanedPreview.isNotEmpty
-                                ? (cleanedPreview[0] as Map<String, dynamic>)
-                                    .keys
-                                    .map((key) => DataColumn(label: Text(key)))
-                                    .toList()
-                                : [],
-                            rows: cleanedPreview.map((row) {
-                              final rowMap = row as Map<String, dynamic>;
-                              return DataRow(
-                                cells: rowMap.values
-                                    .map((value) =>
-                                        DataCell(Text(value.toString())))
-                                    .toList(),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 20,right: 20, bottom: 15),
-        child: ElevatedButton.icon(
-          onPressed: (missingSummary.isEmpty || cleanedPreview.isNotEmpty)
-              ? () {
-                  navigateToPage(context, RemoveDuplicatesScreen());
-                }
-              : null,
-          icon: const Icon(Icons.analytics, color: Colors.white),
-          label: const Text(
-            'Next, remove duplicates',
-            style: TextStyle(fontSize: 17),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-            foregroundColor: Colors.white,
-            minimumSize: const Size.fromHeight(50),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 60,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  navigateToPage(context, DataPreviewScreen());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade600,
+                  padding: EdgeInsets.zero, // removes default padding
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.dataset,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: (missingSummary.isEmpty || cleanedPreview.isNotEmpty)
+                    ? () {
+                        navigateToPage(context, RemoveDuplicatesScreen());
+                      }
+                    : null,
+                icon: Icon(
+                  Icons.arrow_forward,
+                  size: 22,
+                ),
+                label: const Text('remove duplicates',
+                    style: TextStyle(fontSize: 18)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

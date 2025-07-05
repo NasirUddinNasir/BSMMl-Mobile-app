@@ -4,6 +4,7 @@ import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/preprocessin_screens/fix_data_types_screen.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
 
 class RemoveDuplicatesScreen extends StatefulWidget {
   const RemoveDuplicatesScreen({super.key});
@@ -14,7 +15,6 @@ class RemoveDuplicatesScreen extends StatefulWidget {
 
 class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
   final String apiUrl = '$baseUrl/remove-duplicates';
-  List<Map<String, dynamic>> previewData = [];
   bool isLoading = true;
   String message = '';
 
@@ -25,7 +25,6 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         setState(() {
-          previewData = List<Map<String, dynamic>>.from(jsonResponse['preview']);
           message = jsonResponse['message'];
           isLoading = false;
         });
@@ -49,95 +48,124 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
     fetchCleanedData();
   }
 
-  Widget buildDataTable() {
-    if (previewData.isEmpty) {
-      return const Text("No data to preview.");
-    }
-
-    final columns = previewData[0].keys.toList();
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: DataTable(
-          headingRowColor: WidgetStateProperty.all(Colors.blue.shade100),
-          columns: columns.map((key) => DataColumn(label: Text(key))).toList(),
-          rows: previewData.map((row) {
-            return DataRow(
-              cells: columns.map((col) => DataCell(Text('${row[col]}'))).toList(),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Remove Duplicates', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),),
+        title: const Text(
+          'Remove Duplicates',
+          style: TextStyle(
+            fontSize: 20,
+          ),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: iconButton(context),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: Colors.blue.shade600))
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  color: Colors.blue.shade50,
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 82, 150),
+          ? Center(
+              child: CircularProgressIndicator(color: Colors.blue.shade600),
+            )
+          : Center(
+              child: Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.shade200),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      message,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 60, 120),
+                      ),
                     ),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(
-                    "Data Preview",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 82, 150),
+                    const SizedBox(height: 10),
+                    Text(
+                      message.contains('No duplicates found')
+                          ? "Great news! Your dataset has no duplicate rows, ensuring clean and consistent data."
+                          : "We scanned your dataset for identical rows and removed any duplicates found. "
+                              "This helps ensure clean and consistent data for analysis.",
+                      textAlign: TextAlign.center,
+                      style:
+                          const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Next",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 0, 82, 150),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                      "You can now preview the cleaned dataset or proceed to fix incorrect data types.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: buildDataTable(),
-                  ),
-                ),
-              ],
-            ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 12.0, left: 15, right: 15),
-          child: ElevatedButton(
-            onPressed: () {
-              navigateToPage(context, FixDataTypesScreen());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-              padding: const EdgeInsets.symmetric(vertical: 13),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(11),
               ),
             ),
-            child: const Text(
-              "Next, Fix Data Types",
-              style: TextStyle(fontSize: 18, color: Colors.white),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 60,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  navigateToPage(context, DataPreviewScreen());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade600,
+                  padding: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.dataset,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  navigateToPage(context, FixDataTypesScreen());
+                },
+                icon: const Icon(Icons.arrow_forward, size: 22),
+                label: const Text(
+                  "Fix Data Types",
+                  style: TextStyle(fontSize: 18),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

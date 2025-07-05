@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/preprocessin_screens/encoding_screen.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
   Map<String, String> selectedTypes = {};
   bool isLoading = true;
   String error = '';
+  bool applyEnabled = false;
 
   final List<String> typeOptions = [
     'int',
@@ -49,6 +51,7 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
           selectedTypes = currentTypes
               .map((key, value) => MapEntry(key, mapPandasTypeToBasic(value)));
           isLoading = false;
+          applyEnabled = false;
         });
       } else {
         setState(() {
@@ -89,7 +92,6 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
 
       if (response.statusCode == 200) {
         if (message == "Data types updated successfully.") {
-          // Refresh types to reflect new changes
           await fetchDataTypes();
         }
         if (!mounted) return;
@@ -140,6 +142,15 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
     return 'string';
   }
 
+  bool hasChanges() {
+    for (var key in currentTypes.keys) {
+      if (selectedTypes[key] != mapPandasTypeToBasic(currentTypes[key]!)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   Widget buildColumnWidget(String column, String originalType) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -156,7 +167,7 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width *0.9, // 50% of screen width
+                width: MediaQuery.of(context).size.width * 0.9,
                 child: Text(
                   column,
                   maxLines: 3,
@@ -165,11 +176,13 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
-              SizedBox(height: 7,),
+              const SizedBox(height: 7),
               Text(
                 'Current data Type: ${mapPandasTypeToBasic(originalType)}',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black54),
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black54),
               ),
             ],
           ),
@@ -186,6 +199,7 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
             onChanged: (value) {
               setState(() {
                 selectedTypes[column] = value!;
+                applyEnabled = hasChanges();
               });
             },
           ),
@@ -208,8 +222,7 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
         leading: iconButton(context),
       ),
       body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: Colors.blue.shade700))
+          ? Center(child: CircularProgressIndicator(color: Colors.blue.shade700))
           : error.isNotEmpty
               ? Center(child: Text(error))
               : Padding(
@@ -218,8 +231,8 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
                     children: [
                       const Text(
                         'Select Correct Data Types for Each Column',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                        style:
+                            TextStyle(fontSize: 17,fontWeight:FontWeight.w500),
                       ),
                       const SizedBox(height: 20),
                       ...currentTypes.entries.map(
@@ -228,56 +241,81 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
                   ),
                 ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      applyFixes();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 2, 143, 93),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: ElevatedButton(
+                  onPressed: applyEnabled ? applyFixes : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 2, 143, 93),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      "Apply Data Type Fixes",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                  ),
+                  child: const Text(
+                    "Apply Fixes",
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
-              const SizedBox(height: 15),
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      navigateToPage(context, EncodeScreen());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 60,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        navigateToPage(context, DataPreviewScreen());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade600,
+                        padding: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.dataset,
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       ),
                     ),
-                    child: const Text(
-                      "Next, Encoding",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        navigateToPage(context, EncodeScreen());
+                      },
+                      icon: const Icon(Icons.arrow_forward, size: 22),
+                      label: const Text(
+                        "Next, Encoding",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(50),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

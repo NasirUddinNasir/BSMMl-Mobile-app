@@ -5,11 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class DataPreviewScreen extends StatefulWidget {
-  final Widget nextScreen;
-  final String buttontext;
-
-  const DataPreviewScreen(
-      {super.key, required this.nextScreen, required this.buttontext});
+  const DataPreviewScreen({super.key});
 
   @override
   State<DataPreviewScreen> createState() => _DataPreviewScreenState();
@@ -61,7 +57,6 @@ class _DataPreviewScreenState extends State<DataPreviewScreen> {
       return const Center(child: Text('No data to display.'));
     }
 
-    // Extract column headers
     final columns = previewData.first.keys.toList();
 
     return SingleChildScrollView(
@@ -92,8 +87,7 @@ class _DataPreviewScreenState extends State<DataPreviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Preview Data',
-            style: TextStyle(fontSize: 20, )),
+        title: const Text('Preview Data', style: TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -111,30 +105,16 @@ class _DataPreviewScreenState extends State<DataPreviewScreen> {
                     child: buildTable(),
                   ),
                 ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                navigateToPage(context, widget.nextScreen);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Text(
-                widget.buttontext,
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
-            ),
-          ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: FloatingActionButton(
+          onPressed: () => Navigator.pop(context),
+          backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+          shape: const CircleBorder(),
+          child: const Icon(Icons.keyboard_arrow_down, size: 30,color: Colors.white,),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

@@ -32,7 +32,10 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
   }
 
   Future<void> fetchOutliers() async {
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      outlierHandled = false;
+    });
     try {
       final response = await http.get(Uri.parse(getOutliersUrl));
       if (response.statusCode == 200) {
@@ -65,12 +68,14 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Outliers handled using $selectedMethod method")),
         );
+        await fetchOutliers(); // Refresh to remove handled rows
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to handle outliers")),
         );
       }
     } catch (e) {
+      if (!mounted) return;
       debugPrint("Outlier handling error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("An error occurred")),
@@ -83,6 +88,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
   @override
   Widget build(BuildContext context) {
     final noOutliers = outliers.isEmpty;
+    final proceedToNext = noOutliers || outlierHandled;
 
     return Scaffold(
       appBar: AppBar(
@@ -95,7 +101,36 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : noOutliers
-              ? const Center(child: Text("No outliers detected"))
+              ? Center(
+                  child: Container(
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "🎉 Good News!",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 0, 100, 0),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Outliers handled or not found in your dataset. You can safely proceed to the next step.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.black87),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               : Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ListView(
@@ -132,10 +167,15 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: DataTable(
-                          columns: outliers[0].keys.map((key) => DataColumn(label: Text(key))).toList(),
+                          columns: outliers[0]
+                              .keys
+                              .map((key) => DataColumn(label: Text(key)))
+                              .toList(),
                           rows: outliers.map((row) {
                             return DataRow(
-                              cells: row.values.map((value) => DataCell(Text(value.toString()))).toList(),
+                              cells: row.values
+                                  .map((value) => DataCell(Text(value.toString())))
+                                  .toList(),
                             );
                           }).toList(),
                         ),
@@ -145,33 +185,72 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: isProcessing
-                  ? null
-                  : () {
-                      if (outlierHandled || noOutliers) {
-                        navigateToPage(context, DataPreviewScreen(buttontext: "Next, feature selection", nextScreen: FeatureSelectionScreen()));
-                      } else {
-                        applyOutlierHandling();
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          child: Row(
+            children: [
+              // 👈 Preview Button
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
                 ),
               ),
-              child: isProcessing
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      (outlierHandled || noOutliers) ? "Preview Data" : "Apply Method",
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
+              const SizedBox(width: 12),
+
+              // 👉 Main Button
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: isProcessing
+                      ? null
+                      : () {
+                          if (proceedToNext) {
+                            navigateToPage(context, FeatureSelectionScreen());
+                          } else {
+                            applyOutlierHandling();
+                          }
+                        },
+                  icon: isProcessing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.blue,
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward),
+                  label: Text(
+                    proceedToNext ? "Feature Selection" : "Apply Method",
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-            ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

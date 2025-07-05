@@ -1,49 +1,34 @@
 import 'dart:io';
+import 'package:analysis_app/api/base_url.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:analysis_app/api/base_url.dart';
 import 'package:intl/intl.dart';
 
-/// Request storage permission
-Future<bool> requestStoragePermission() async {
-  if (Platform.isAndroid) {
-    if (await Permission.storage.isGranted) return true;
-
-    var status = await Permission.storage.request();
-    if (status.isGranted) return true;
-
-    if (await Permission.manageExternalStorage.isGranted) return true;
-
-    var manageStatus = await Permission.manageExternalStorage.request();
-    return manageStatus.isGranted;
-  }
-  return true;
-}
-
-Future<void> downloadCleanedCSV(BuildContext context) async {
-  final url = "$baseUrl/download-cleaned-data";
+Future<void> downloadTrainedModel(BuildContext context) async {
+  final url = "$baseUrl/download-trained-model";
   final dio = Dio();
 
   try {
-    bool permissionGranted = await requestStoragePermission();
-    if (!permissionGranted) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Storage permission denied")),
-        );
-      }
+    var status = await Permission.storage.request();
+    if (!status.isGranted) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Storage permission denied')),
+      );
       return;
     }
 
     final dir = Directory('/storage/emulated/0/Download');
     final now = DateTime.now();
-    final formatted = DateFormat('yyyyMMdd_HHmmss').format(now);
-    final filePath = "${dir.path}/cleaned_data_$formatted.csv";
+    final formatted =
+    DateFormat('yyyyMMdd_HHmmss').format(now);
+    final filePath = "${dir.path}/trained_model_$formatted.csv";
 
     int received = 0;
     int total = 0;
 
+    // Controller to update UI inside dialog
     late void Function(void Function()) setDialogState;
 
     if (!context.mounted) return;
@@ -55,7 +40,7 @@ Future<void> downloadCleanedCSV(BuildContext context) async {
           builder: (context, setState) {
             setDialogState = setState;
             return AlertDialog(
-              title: Text("Downloading Cleaned Data"),
+              title: Text("Downloading Model"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -87,17 +72,17 @@ Future<void> downloadCleanedCSV(BuildContext context) async {
       },
     );
 
-    if (context.mounted) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("File downloaded to: $filePath")),
-      );
-    }
+    if (!context.mounted) return;
+    Navigator.of(context).pop();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Model downloaded to: $filePath')),
+    );
   } catch (e) {
     if (context.mounted) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Download failed: $e")),
+        SnackBar(content: Text('Download error: $e')),
       );
     }
   }

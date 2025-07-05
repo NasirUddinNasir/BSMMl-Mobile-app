@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/api/upload.dart';
+import 'package:analysis_app/screens/ml_screens/prediction/prediction_target_selection_screen.dart';
 
 class CSVUploader extends StatefulWidget {
   const CSVUploader({super.key});
@@ -189,6 +190,7 @@ class CSVUploaderState extends State<CSVUploader> {
                     }
                   },
                 ),
+                IconButton(onPressed: ()=>navigateToPage(context, PredictionTargetSelectionScreen()), icon: Icon(Icons.arrow_back))
               ],
             ),
           ),
