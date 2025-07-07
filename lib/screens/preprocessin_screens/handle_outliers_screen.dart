@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/preprocessin_screens/feature_selection_screen.dart';
@@ -23,7 +24,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
   bool outlierHandled = false;
 
   String selectedMethod = 'iqr';
-  final List<String> methods = ['iqr', 'clipping', 'median', 'drop'];
+  final List<String> methods = ['iqr','median', 'drop'];
 
   @override
   void initState() {
@@ -66,7 +67,8 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
       if (response.statusCode == 200) {
         setState(() => outlierHandled = true);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Outliers handled using $selectedMethod method")),
+          SnackBar(
+              content: Text("Outliers handled using $selectedMethod method")),
         );
         await fetchOutliers(); // Refresh to remove handled rows
       } else {
@@ -137,7 +139,8 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                     children: [
                       const Text(
                         "Select method to handle outliers",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
@@ -174,7 +177,8 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                           rows: outliers.map((row) {
                             return DataRow(
                               cells: row.values
-                                  .map((value) => DataCell(Text(value.toString())))
+                                  .map((value) =>
+                                      DataCell(Text(value.toString())))
                                   .toList(),
                             );
                           }).toList(),
@@ -185,7 +189,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          padding: const EdgeInsets.only(left: 15, bottom: 8),
           child: Row(
             children: [
               // 👈 Preview Button
@@ -249,6 +253,12 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                     ),
                   ),
                 ),
+              ),
+              IconButton(
+                icon: Icon(Icons.home),
+                color: const Color.fromARGB(255, 17, 57, 143),
+                iconSize: 45,
+                onPressed: () => navigateToPage(context, CSVUploader()),
               ),
             ],
           ),

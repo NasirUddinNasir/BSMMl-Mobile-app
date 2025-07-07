@@ -106,7 +106,7 @@ class _DataPreviewScreenState extends State<DataPreviewScreen> {
                   ),
                 ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: 15),
         child: FloatingActionButton(
           onPressed: () => Navigator.pop(context),
           backgroundColor: const Color.fromARGB(255, 11, 95, 163),

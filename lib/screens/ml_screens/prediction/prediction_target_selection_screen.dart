@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/api/base_url.dart';
@@ -120,28 +122,60 @@ class _PredictionTargetSelectionScreenState
             ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: selectedTarget == null || isSubmitting
-                  ? null
-                  : submitTargetColumn,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                disabledBackgroundColor: Colors.grey.shade300,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+          padding: const EdgeInsets.only(left: 15, bottom: 8),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, const DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
                 ),
               ),
-              child: isSubmitting
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text(
-                      "Proceed",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: selectedTarget == null || isSubmitting
+                      ? null
+                      : submitTargetColumn,
+                  icon: const Icon(Icons.arrow_forward),
+                  label: Text(
+                    "Next",
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
-            ),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.home),
+                color: const Color.fromARGB(255, 17, 57, 143),
+                iconSize: 45,
+                onPressed: () => navigateToPage(context, CSVUploader()),
+              ),
+            ],
           ),
         ),
       ),

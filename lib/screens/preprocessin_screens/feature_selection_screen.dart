@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
@@ -33,7 +34,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
   Future<void> fetchFeatures() async {
     setState(() {
       isLoading = true;
-      selectedFeatures.clear(); // reset selection
+      selectedFeatures.clear(); 
     });
     try {
       final response = await http.get(Uri.parse(getFeaturesUrl));
@@ -104,7 +105,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
         elevation: 0,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color:  Color.fromARGB(255, 13, 92, 156)))
           : noFeatures
               ? Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -195,7 +196,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          padding: const EdgeInsets.only(left: 15, bottom: 8),
           child: Row(
             children: [
               // Preview button
@@ -243,7 +244,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: Color.fromARGB(255, 13, 92, 156),
                           ),
                         )
                       : const Icon(Icons.arrow_forward),
@@ -254,7 +255,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                             ? "Next"
                             : (selectedFeatures.isEmpty
                                 ? "Next"
-                                : "Drop Selected Features"),
+                                : "Drop Selected"),
                     style: const TextStyle(fontSize: 17),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -267,6 +268,12 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                   ),
                 ),
               ),
+               IconButton(
+          icon: Icon(Icons.home),
+          color: const Color.fromARGB(255, 17, 57, 143),
+          iconSize: 45,
+          onPressed: () => navigateToPage(context, CSVUploader()),
+        ),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -91,7 +92,7 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
                     Text(
                       message.contains('No duplicates found')
                           ? "Great news! Your dataset has no duplicate rows, ensuring clean and consistent data."
-                          : "We scanned your dataset for identical rows and removed any duplicates found. "
+                          : "Your dataset has been scanned for identical rows and removed any duplicates found. "
                               "This helps ensure clean and consistent data for analysis.",
                       textAlign: TextAlign.center,
                       style:
@@ -118,7 +119,7 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
               ),
             ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+        padding: const EdgeInsets.only(left: 15, bottom: 17),
         child: Row(
           children: [
             SizedBox(
@@ -165,6 +166,12 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
                 ),
               ),
             ),
+             IconButton(
+          icon: Icon(Icons.home),
+          color: const Color.fromARGB(255, 17, 57, 143),
+          iconSize: 45,
+          onPressed: () => navigateToPage(context, CSVUploader()),
+        ),
           ],
         ),
       ),

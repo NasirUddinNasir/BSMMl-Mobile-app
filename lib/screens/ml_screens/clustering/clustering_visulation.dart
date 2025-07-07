@@ -22,7 +22,7 @@ class ClusterVisualizationsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: Text("$model - Extra Visualizations"),
+        title: Text("$model - Visualizations",style: TextStyle(fontSize: 20),),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -47,10 +47,10 @@ class ClusterVisualizationsScreen extends StatelessWidget {
         Text(title,
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: Colors.blue.shade800,
             )),
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         Container(
           decoration: BoxDecoration(
             color: Colors.blue.shade50,

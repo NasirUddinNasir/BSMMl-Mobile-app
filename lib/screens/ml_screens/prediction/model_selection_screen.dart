@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -16,20 +18,45 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
   String? targetType;
   bool isLoading = true;
   String? selectedModelName;
-  String? selectedEndpoint;
+  String selectedEndpoint = '';
 
   final classificationModels = {
-    "Logistic Regression": "predict-logistic-regression",
-    "Random Forest Classifier": "predict-random-forest-classifier",
-    "KNN Classifier": "predict-knn-classifier",
-    "XGBoost Classifier": "predict-xgb-classifier",
+    "Logistic Regression": {
+      "endpoint": "predict-logistic-regression",
+      "info": "Best for binary classification problems."
+    },
+    "Random Forest Classifier": {
+      "endpoint": "predict-random-forest-classifier",
+      "info":
+          "Handles both binary and multi-class classification with high accuracy."
+    },
+    "KNN Classifier": {
+      "endpoint": "predict-knn-classifier",
+      "info": "Works well with small datasets and simple patterns."
+    },
+    "XGBoost Classifier": {
+      "endpoint": "predict-xgb-classifier",
+      "info": "High-performance model for complex classification problems."
+    },
   };
 
   final regressionModels = {
-    "Linear Regression": "predict-linear-regression",
-    "Random Forest Regressor": "predict-random-forest-regressor",
-    "XGBoost Regressor": "predict-xgb-regressor",
-    "SVR": "predict-svr",
+    "Linear Regression": {
+      "endpoint": "predict-linear-regression",
+      "info": "Simple and fast, ideal for linear relationships."
+    },
+    "Random Forest Regressor": {
+      "endpoint": "predict-random-forest-regressor",
+      "info": "Great for capturing nonlinear relationships in data."
+    },
+    "XGBoost Regressor": {
+      "endpoint": "predict-xgb-regressor",
+      "info": "Powerful model for complex regression tasks."
+    },
+    "SVR": {
+      "endpoint": "predict-svr",
+      "info": "Best for small datasets with nonlinear patterns."
+    },
   };
 
   @override
@@ -57,16 +84,20 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(
+            child: CircularProgressIndicator(
+          color: Color.fromARGB(255, 13, 92, 156),
+        )),
       );
     }
 
-    final models = targetType == "categorical" ? classificationModels : regressionModels;
+    final models =
+        targetType == "categorical" ? classificationModels : regressionModels;
 
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: const Text("Choose a Model"),
+        title: const Text("Prediction Models"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -74,83 +105,156 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Select a machine learning model:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              "Select a machine learning model",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.80, 
                 children: models.entries.map((entry) {
+                  final modelDetails = entry.value;
                   final isSelected = selectedModelName == entry.key;
+
                   return GestureDetector(
                     onTap: () {
                       setState(() {
                         selectedModelName = entry.key;
-                        selectedEndpoint = entry.value;
+                        selectedEndpoint = modelDetails['endpoint']!;
                       });
                     },
-                    child: Card(
-                      elevation: 0,
-                      color: isSelected ? Colors.blue.shade50 : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          color: isSelected ? Colors.blue : Colors.grey.shade300,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.blue.shade50 : Colors.white,
+                        border: Border.all(
+                          color:
+                              isSelected ? Colors.blue : Colors.grey.shade300,
                           width: 2,
                         ),
-                      ),
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      child: ListTile(
-                        title: Text(
-                          entry.key,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.blue : Colors.black,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
                           ),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check_circle, color: Colors.blue)
-                            : null,
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.memory_rounded,
+                            color:
+                                isSelected ? Colors.blue : Colors.grey.shade700,
+                            size: 34,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            entry.key,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: isSelected
+                                  ? Colors.blue.shade900
+                                  : Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            modelDetails['info']!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
                 }).toList(),
               ),
             ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: selectedModelName == null
-                    ? null
-                    : () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ModelParametersScreen(
-                              modelName: selectedModelName!,
-                              endpoint: selectedEndpoint!,
-                            ),
-                          ),
-                        );
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                  disabledBackgroundColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+          ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15, bottom: 8),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, const DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
-                child: const Text(
-                  "Next",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: selectedModelName == null
+                      ? null
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ModelParametersScreen(
+                                modelName: selectedModelName!,
+                                endpoint: selectedEndpoint,
+                              ),
+                            ),
+                          );
+                        },
+                  icon: const Icon(Icons.arrow_forward),
+                  label: const Text(
+                    "Next",
+                    style: TextStyle(fontSize: 17),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
+              IconButton(
+                icon: const Icon(Icons.home),
+                color: const Color.fromARGB(255, 17, 57, 143),
+                iconSize: 45,
+                onPressed: () => navigateToPage(context, const CSVUploader()),
+              ),
+            ],
+          ),
         ),
       ),
     );

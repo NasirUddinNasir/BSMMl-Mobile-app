@@ -22,7 +22,7 @@ Future<int> uploadCSVFile(File csvFile) async {
 
     // Add timeout handling
     final streamedResponse = await request.send().timeout(
-      Duration(seconds: 10),
+      Duration(seconds: 20),
       onTimeout: () {
         throw TimeoutException("The connection has timed out!");
       },

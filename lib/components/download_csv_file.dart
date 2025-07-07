@@ -4,8 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:analysis_app/api/base_url.dart';
 import 'package:intl/intl.dart';
+import 'package:analysis_app/global_state.dart';
 
-/// Request storage permission
 Future<bool> requestStoragePermission() async {
   if (Platform.isAndroid) {
     if (await Permission.storage.isGranted) return true;
@@ -29,7 +29,7 @@ Future<void> downloadCleanedCSV(BuildContext context) async {
     bool permissionGranted = await requestStoragePermission();
     if (!permissionGranted) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar( 
           const SnackBar(content: Text("Storage permission denied")),
         );
       }
@@ -39,7 +39,7 @@ Future<void> downloadCleanedCSV(BuildContext context) async {
     final dir = Directory('/storage/emulated/0/Download');
     final now = DateTime.now();
     final formatted = DateFormat('yyyyMMdd_HHmmss').format(now);
-    final filePath = "${dir.path}/cleaned_data_$formatted.csv";
+    final filePath = "${dir.path}/${GlobalStore().csvStats['filename']}-cleaned_data_$formatted.csv";
 
     int received = 0;
     int total = 0;

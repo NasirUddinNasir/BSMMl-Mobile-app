@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -123,7 +124,7 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                         border: Border.all(color: Colors.green.shade300),
                       ),
                       child: const Text(
-                        '🎉 Good News!\n\nYour data is all set. No missing values found.',
+                        '🎉 Good News!\n\nYour data is all set. No more missing values.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 17,
@@ -224,8 +225,9 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
               ],
             ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+        padding: const EdgeInsets.only(left: 15, bottom: 17),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
               width: 60,
@@ -236,7 +238,7 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade600,
-                  padding: EdgeInsets.zero, // removes default padding
+                  padding: EdgeInsets.zero, 
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
@@ -262,7 +264,7 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                   Icons.arrow_forward,
                   size: 22,
                 ),
-                label: const Text('remove duplicates',
+                label: const Text('Duplicates',
                     style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 11, 95, 163),
@@ -274,6 +276,12 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                 ),
               ),
             ),
+            IconButton(
+          icon: Icon(Icons.home),
+          color: const Color.fromARGB(255, 17, 57, 143),
+          iconSize: 45,
+          onPressed: () => navigateToPage(context, CSVUploader()),
+        ),
           ],
         ),
       ),

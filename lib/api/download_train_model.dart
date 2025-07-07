@@ -5,30 +5,44 @@ import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 
+Future<bool> requestStoragePermission() async {
+  if (Platform.isAndroid) {
+    if (await Permission.storage.isGranted) return true;
+
+    var status = await Permission.storage.request();
+    if (status.isGranted) return true;
+
+    if (await Permission.manageExternalStorage.isGranted) return true;
+
+    var manageStatus = await Permission.manageExternalStorage.request();
+    return manageStatus.isGranted;
+  }
+  return true;
+}
+
 Future<void> downloadTrainedModel(BuildContext context) async {
   final url = "$baseUrl/download-trained-model";
   final dio = Dio();
 
   try {
-    var status = await Permission.storage.request();
-    if (!status.isGranted) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Storage permission denied')),
-      );
+    bool permissionGranted = await requestStoragePermission();
+    if (!permissionGranted) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Storage permission denied")),
+        );
+      }
       return;
     }
 
     final dir = Directory('/storage/emulated/0/Download');
     final now = DateTime.now();
-    final formatted =
-    DateFormat('yyyyMMdd_HHmmss').format(now);
-    final filePath = "${dir.path}/trained_model_$formatted.csv";
+    final formatted = DateFormat('yyyyMMdd_HHmmss').format(now);
+    final filePath = "${dir.path}/trained_model_$formatted.pkl";
 
     int received = 0;
     int total = 0;
 
-    // Controller to update UI inside dialog
     late void Function(void Function()) setDialogState;
 
     if (!context.mounted) return;
@@ -40,7 +54,7 @@ Future<void> downloadTrainedModel(BuildContext context) async {
           builder: (context, setState) {
             setDialogState = setState;
             return AlertDialog(
-              title: Text("Downloading Model"),
+              title: Text("Downloading Trained Model"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -72,17 +86,17 @@ Future<void> downloadTrainedModel(BuildContext context) async {
       },
     );
 
-    if (!context.mounted) return;
-    Navigator.of(context).pop();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Model downloaded to: $filePath')),
-    );
+    if (context.mounted) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Trained model downloaded to: $filePath")),
+      );
+    }
   } catch (e) {
     if (context.mounted) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Download error: $e')),
+        SnackBar(content: Text("Download failed: $e")),
       );
     }
   }

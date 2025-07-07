@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
+import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -32,7 +33,7 @@ class _EncodeScreenState extends State<EncodeScreen> {
   Future<void> fetchCategoricalColumns() async {
     setState(() {
       isLoading = true;
-      selectedColumns.clear(); 
+      selectedColumns.clear();
     });
     try {
       final response = await http.get(Uri.parse(getColumnsUrl));
@@ -91,9 +92,8 @@ class _EncodeScreenState extends State<EncodeScreen> {
   @override
   Widget build(BuildContext context) {
     final bool noColumnsLeft = categoricalColumns.isEmpty;
-    final bool shouldNormalize = selectedColumns.isEmpty || (encodingDone || categoricalColumns.isEmpty);
-
-
+    final bool shouldNormalize =
+        selectedColumns.isEmpty || (encodingDone || categoricalColumns.isEmpty);
 
     return Scaffold(
       appBar: AppBar(
@@ -155,7 +155,7 @@ class _EncodeScreenState extends State<EncodeScreen> {
             ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+          padding: const EdgeInsets.only(left: 15, bottom: 8),
           child: Row(
             children: [
               // 👈 Preview Button
@@ -219,6 +219,12 @@ class _EncodeScreenState extends State<EncodeScreen> {
                     ),
                   ),
                 ),
+              ),
+              IconButton(
+                icon: Icon(Icons.home),
+                color: const Color.fromARGB(255, 17, 57, 143),
+                iconSize: 45,
+                onPressed: () => navigateToPage(context, CSVUploader()),
               ),
             ],
           ),

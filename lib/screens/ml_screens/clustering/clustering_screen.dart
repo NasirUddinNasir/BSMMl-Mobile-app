@@ -1,4 +1,5 @@
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'clustering_result_screen.dart';
@@ -24,6 +25,9 @@ class ClusteringScreenState extends State<ClusteringScreen> {
   Map<String, dynamic> params = {};
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> newFormKey = GlobalKey<FormState>();
+  Map<String, dynamic>? latestResult;
+
+  bool isLoading = false;
 
   void setDefaultParams(String model) {
     switch (model) {
@@ -62,6 +66,8 @@ class ClusteringScreenState extends State<ClusteringScreen> {
     if (!newFormKey.currentState!.validate()) return;
     newFormKey.currentState!.save();
 
+    setState(() => isLoading = true);
+
     final endpoint = modelEndpoints[selectedModel]!;
     final response = await http.post(
       Uri.parse(endpoint),
@@ -69,9 +75,12 @@ class ClusteringScreenState extends State<ClusteringScreen> {
       body: json.encode(params),
     );
 
+    setState(() => isLoading = false);
+
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       if (!mounted) return;
+      latestResult = result;
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -89,43 +98,46 @@ class ClusteringScreenState extends State<ClusteringScreen> {
     }
   }
 
- Widget buildParamField(String key, dynamic value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
-    child: TextFormField(
-      key: ValueKey("$selectedModel-$key"),
-      initialValue: value.toString(),
-      style: TextStyle(fontSize: 16),
-      decoration: InputDecoration(
-        labelText: key,
-        labelStyle: TextStyle(fontSize: 20,fontWeight: FontWeight.w400, color: Colors.blue.shade700),
-        filled: true,
-        fillColor: Colors.blue.shade50,
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.blue.shade200, width: 1.5),
+  Widget buildParamField(String key, dynamic value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
+      child: TextFormField(
+        key: ValueKey("$selectedModel-$key"),
+        initialValue: value.toString(),
+        style: TextStyle(fontSize: 16),
+        decoration: InputDecoration(
+          labelText: key,
+          labelStyle: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+              color: Colors.blue.shade700),
+          filled: true,
+          fillColor: Colors.blue.shade50,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: Colors.blue.shade200, width: 1.5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
-        ),
-      ),
-      onSaved: (val) {
-        if (val != null) {
-          if (value is int) {
-            params[key] = int.tryParse(val) ?? value;
-          } else if (value is double) {
-            params[key] = double.tryParse(val) ?? value;
-          } else {
-            params[key] = val;
+        onSaved: (val) {
+          if (val != null) {
+            if (value is int) {
+              params[key] = int.tryParse(val) ?? value;
+            } else if (value is double) {
+              params[key] = double.tryParse(val) ?? value;
+            } else {
+              params[key] = val;
+            }
           }
-        }
-      },
-    ),
-  );
-}
-
+        },
+      ),
+    );
+  }
 
   Widget buildModelSelection() {
     return Wrap(
@@ -145,7 +157,7 @@ class ClusteringScreenState extends State<ClusteringScreen> {
             duration: Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.blue.shade600 : Colors.white,
+              color: isSelected ? Colors.blue.shade500 : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -178,7 +190,10 @@ class ClusteringScreenState extends State<ClusteringScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: const Text("Clustering Models"),
+        title: const Text(
+          "Clustering Models",
+          style: TextStyle(fontSize: 20),
+        ),
         backgroundColor: Colors.transparent,
       ),
       body: LayoutBuilder(
@@ -194,12 +209,11 @@ class ClusteringScreenState extends State<ClusteringScreen> {
                       Align(
                         alignment: Alignment(-1.05, 0),
                         child: const Text(
-                        "Choose a clustering model:",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ) , 
+                          "Choose a clustering model:",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
                       ),
-                     
                       const SizedBox(height: 20),
                       buildModelSelection(),
                       if (selectedModel != null) ...[
@@ -222,25 +236,98 @@ class ClusteringScreenState extends State<ClusteringScreen> {
           );
         },
       ),
-      bottomNavigationBar: selectedModel != null
-          ? Padding(
-              padding: const EdgeInsets.all(15),
-              child: ElevatedButton(
-                onPressed: runModel,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 18, 63, 160),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, const DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
-                child: const Text(
-                  "Run Model",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed:
+                      (selectedModel == null || isLoading) ? null : runModel,
+                  icon: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: Color.fromARGB(255, 18, 94, 156),
+                          ),
+                        )
+                      : const Icon(Icons.play_arrow),
+                  label: Text(
+                    isLoading ? "Running..." : "Run Model",
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 18, 63, 160),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  ),
                 ),
               ),
-            )
-          : null,
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: (latestResult != null && selectedModel != null)
+                      ? () {
+                          navigateToPage(
+                            context,
+                            ClusteringResultScreen(
+                              model: selectedModel!,
+                              result: latestResult!,
+                            ),
+                          );
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 17, 57, 143),
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 25,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
