@@ -5,7 +5,7 @@ import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/components/model_parameters.dart';
+import 'package:analysis_app/screens/ml_screens/prediction/model_parameters_screen.dart';
 
 class ModelSelectionScreen extends StatefulWidget {
   const ModelSelectionScreen({super.key});

@@ -6,6 +6,7 @@ import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:analysis_app/global_state.dart';
 
 class FixDataTypesScreen extends StatefulWidget {
   const FixDataTypesScreen({super.key});
@@ -51,6 +52,9 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
               types.map((key, value) => MapEntry(key, value.toString()));
           selectedTypes = currentTypes
               .map((key, value) => MapEntry(key, mapPandasTypeToBasic(value)));
+          
+          GlobalStore().columnsWithTypes = Map<String, String>.from(selectedTypes);
+
           isLoading = false;
           applyEnabled = false;
         });

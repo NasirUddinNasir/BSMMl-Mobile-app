@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/screens/ml_screens/prediction/prediction_visualization_screen.dart';
-import 'package:analysis_app/api/download_train_model.dart';
+import 'package:analysis_app/screens/ml_screens/prediction/result_sceen.dart';
 
 class ModelParametersScreen extends StatefulWidget {
   final String modelName;
@@ -25,7 +24,7 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
   final Map<String, dynamic> params = {};
   bool isLoading = false;
 
-  // Updated to handle structured metrics
+  // Results data to pass to results screen
   Map<String, dynamic>? trainMetrics;
   Map<String, dynamic>? testMetrics;
   List<dynamic>? samplePredictions;
@@ -80,7 +79,6 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
       "reg_lambda": 1.0,
       "min_child_weight": 1,
       "gamma": 0.0,
-      // "scale_pos_weight": 1.0,
       "random_state": 42,
       "n_jobs": null,
       "objective": "binary:logistic",
@@ -189,12 +187,6 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     }
   }
 
-  // Determine if this is a classification or regression model
-  bool isClassificationModel() {
-    return widget.endpoint.contains('classifier') ||
-        widget.endpoint.contains('logistic-regression');
-  }
-
   Future<void> submit() async {
     setState(() {
       isLoading = true;
@@ -228,6 +220,18 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
             testMetrics = data["test_metrics"] as Map<String, dynamic>?;
             samplePredictions = data["sample_predictions"] as List<dynamic>?;
           });
+
+          // Navigate to results screen with the data
+          navigateToPage(
+            context,
+            ResultsScreen(
+              modelName: widget.modelName,
+              modelType: modelType,
+              trainMetrics: trainMetrics,
+              testMetrics: testMetrics,
+              samplePredictions: samplePredictions,
+            ),
+          );
         }
       } else {
         if (mounted) {
@@ -424,221 +428,6 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     return _buildTextInput(key, value);
   }
 
-  Widget _buildMetricsCard(
-      String title, Map<String, dynamic> metrics, Color color) {
-    return Card(
-      color: Colors.green.shade50,
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...metrics.entries.map((entry) {
-              final value = entry.value;
-              final displayValue =
-                  value is num ? value.toStringAsFixed(3) : value.toString();
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _formatMetricName(entry.key),
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    Text(
-                      displayValue,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatMetricName(String metricName) {
-    switch (metricName) {
-      case 'accuracy':
-        return 'Accuracy';
-      case 'precision':
-        return 'Precision';
-      case 'recall':
-        return 'Recall';
-      case 'f1':
-        return 'F1 Score';
-      case 'r2_score':
-        return 'R² Score';
-      case 'mse':
-        return 'MSE';
-      case 'rmse':
-        return 'RMSE';
-      case 'mae':
-        return 'MAE';
-      default:
-        return metricName.toUpperCase();
-    }
-  }
-
-  Widget buildResultsSection() {
-    if (trainMetrics == null && testMetrics == null) return const SizedBox();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Divider(height: 32),
-        Row(
-          children: [
-            const Icon(Icons.analytics, color: Colors.blue),
-            const SizedBox(width: 8),
-            Text(
-              "Results${modelType != null ? ' - $modelType' : ''}",
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Training and Test Metrics Cards
-        if (trainMetrics != null && testMetrics != null) ...[
-          Row(
-            children: [
-              Expanded(
-                child: _buildMetricsCard(
-                  "Training Metrics",
-                  trainMetrics!,
-                  Colors.green,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildMetricsCard(
-                  "Test Metrics",
-                  testMetrics!,
-                  Colors.orange,
-                ),
-              ),
-            ],
-          ),
-        ] else if (trainMetrics != null) ...[
-          _buildMetricsCard("Training Metrics", trainMetrics!, Colors.green),
-        ] else if (testMetrics != null) ...[
-          _buildMetricsCard("Test Metrics", testMetrics!, Colors.orange),
-        ],
-
-        const SizedBox(height: 16),
-
-        // Sample Predictions
-        if (samplePredictions != null && samplePredictions!.isNotEmpty) ...[
-          const Text(
-            "Sample Predictions:",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade50, Colors.blue.shade100],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.shade200),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "First 10 Predictions:",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  samplePredictions!
-                      .map((e) => e is num
-                          ? e.toStringAsFixed(4)
-                          : e?.toString() ?? 'null')
-                      .join(", "),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'monospace',
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ] else if (samplePredictions != null) ...[
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: const Text(
-              "No predictions available",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildActionButton({
-    required VoidCallback? onPressed,
-    required IconData icon,
-    required String label,
-    required Color backgroundColor,
-    required double borderRadius,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 20, color: Colors.white),
-      label: Text(label,
-          style: const TextStyle(fontSize: 16, color: Colors.white)),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        backgroundColor: backgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
-        ),
-        elevation: 6,
-        shadowColor: Colors.black,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -652,81 +441,108 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
-          padding: const EdgeInsets.only(bottom: 150),
+          padding: const EdgeInsets.only(bottom: 100),
           children: [
             const Text("Set Parameters",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             ...params.entries.map((e) => paramInput(e.key, e.value)),
             const SizedBox(height: 20),
-            buildResultsSection(),
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 48,
-              width: 180,
-              child: ElevatedButton(
-                onPressed: isLoading ? null : submit,
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                child: isLoading
-                    ? const CircularProgressIndicator(
-                        color: Color.fromARGB(255, 13, 92, 156))
-                    : const Text("Run Model",
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    navigateToPage(context, const DataPreviewScreen());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    padding: EdgeInsets.zero,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: _buildActionButton(
-                    onPressed: () => navigateToPage(
-                        context, PredictionVisualizationScreen()),
-                    icon: Icons.bar_chart,
-                    label: "Visualize",
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: isLoading ? null : submit,
+                  icon: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            color: Color.fromARGB(255, 18, 94, 156),
+                          ),
+                        )
+                      : const Icon(Icons.play_arrow),
+                  label: Text(
+                    isLoading ? "Running..." : "Run Model",
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 18, 63, 160),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 60,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: (trainMetrics != null && testMetrics != null)
+                      ? () {
+                          navigateToPage(
+                            context,
+                            ResultsScreen(
+                              modelName: widget.modelName,
+                              modelType: modelType,
+                              trainMetrics: trainMetrics,
+                              testMetrics: testMetrics,
+                              samplePredictions: samplePredictions,
+                            ),
+                          );
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 17, 57, 143),
-                    borderRadius: 50,
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 25,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.home),
-                  color: const Color.fromARGB(255, 17, 57, 143),
-                  iconSize: 40,
-                  onPressed: () => navigateToPage(context, CSVUploader()),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: _buildActionButton(
-                    onPressed: trainMetrics != null
-                        ? () => downloadTrainedModel(context)
-                        : null,
-                    icon: Icons.download_rounded,
-                    label: "Model",
-                    backgroundColor: const Color(0xFF2F9E44),
-                    borderRadius: 10,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            )
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

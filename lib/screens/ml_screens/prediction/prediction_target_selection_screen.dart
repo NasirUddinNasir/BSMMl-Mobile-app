@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:analysis_app/api/base_url.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:analysis_app/screens/ml_screens/prediction/model_selection_screen.dart';
+import 'package:analysis_app/global_state.dart';
 
 class PredictionTargetSelectionScreen extends StatefulWidget {
   const PredictionTargetSelectionScreen({super.key});
@@ -60,6 +61,7 @@ class _PredictionTargetSelectionScreenState
       );
       if (!mounted) return;
       if (response.statusCode == 200) {
+        GlobalStore().columnsWithTypes.remove(selectedTarget);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Target column set successfully.")),
         );

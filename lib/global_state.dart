@@ -9,11 +9,6 @@ class GlobalStore {
   factory GlobalStore() {
     return _instance;
   }
-
-  // The global string variable
-  String selectedPredictionModel = "";
-  String selectedCatagory ="";
   Map<String, dynamic> csvStats = {};
-  String targetColumn = "";
-  List<String> columnsForPridict = [];
+  Map<String, String> columnsWithTypes = {};
 }
