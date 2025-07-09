@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:analysis_app/screens/explore_screen.dart';
-import 'package:analysis_app/screens/ml_screens/clustering/clustering_screen.dart';
+import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
@@ -190,7 +190,7 @@ class CSVUploaderState extends State<CSVUploader> {
                     }
                   },
                 ),
-                IconButton(onPressed: ()=>navigateToPage(context, ClusteringScreen()), icon: Icon(Icons.arrow_back))
+                IconButton(onPressed: ()=>navigateToPage(context, MLTypeSelectionScreen()), icon: Icon(Icons.arrow_back))
               ],
             ),
           ),

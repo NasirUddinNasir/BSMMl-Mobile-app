@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/screens/preprocessin_screens/missing_value_handler.dart';
 import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/components/download_csv_file.dart';
-import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
 
 class FeatureSelectionScreen extends StatefulWidget {
   const FeatureSelectionScreen({super.key});
@@ -54,7 +53,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
 
   Future<void> dropSelectedFeatures() async {
     if (selectedFeatures.isEmpty) {
-      navigateToPage(context, const MLTypeSelectionScreen());
+      navigateToPage(context, const HandleMissingValuesScreen());
       return;
     }
 
@@ -146,23 +145,6 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          const Text("Want to download the clean data?  "),
-                          GestureDetector(
-                            onTap: () => downloadCleanedCSV(context),
-                            child: const Text(
-                              "Touch here",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                                fontSize: 15,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 20),
                       const Text(
                         "Select features to drop",
                         style: TextStyle(
@@ -233,7 +215,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                       : () {
                           if (featuresDropped || noFeatures) {
                             navigateToPage(
-                                context, const MLTypeSelectionScreen());
+                                context, HandleMissingValuesScreen());
                           } else {
                             dropSelectedFeatures();
                           }
@@ -252,9 +234,9 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                     allFeatures.length < 2
                         ? "Need 2+ features"
                         : (featuresDropped || noFeatures)
-                            ? "Next"
+                            ? "Missing Values"
                             : (selectedFeatures.isEmpty
-                                ? "Next"
+                                ? "Missing Values"
                                 : "Drop Selected"),
                     style: const TextStyle(fontSize: 17),
                   ),

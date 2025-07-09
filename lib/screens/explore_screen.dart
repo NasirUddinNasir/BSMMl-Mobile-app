@@ -1,8 +1,8 @@
 import 'package:analysis_app/screens/overview_screen.dart';
+import 'package:analysis_app/screens/preprocessin_screens/feature_selection_screen.dart';
 import 'package:analysis_app/screens/relation_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:analysis_app/screens/preprocessin_screens/missing_value_handler.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -75,7 +75,7 @@ class ExploreScreen extends StatelessWidget {
                 icon: 'assets/images/pre_processing.png',
                 text: 'Data Pre-Processing',
                 onpressed: () =>
-                    navigateToPage(context, HandleMissingValuesScreen()))
+                    navigateToPage(context, FeatureSelectionScreen()))
           ],
         ),
       ),
