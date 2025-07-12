@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
+import 'package:analysis_app/components/download_csv_file.dart';
+import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/screens/preprocessin_screens/normalization_screen.dart';
 
 class EncodeScreen extends StatefulWidget {
   const EncodeScreen({super.key});
@@ -20,6 +21,7 @@ class _EncodeScreenState extends State<EncodeScreen> {
 
   Map<String, String> categoricalColumns = {};
   Set<String> selectedColumns = {};
+  String selectedEncodingMethod = "onehot";
   bool isLoading = true;
   bool isProcessing = false;
   bool encodingDone = false;
@@ -58,7 +60,10 @@ class _EncodeScreenState extends State<EncodeScreen> {
       final response = await http.post(
         Uri.parse(applyEncodingUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'selected_columns': selectedColumns.toList()}),
+        body: jsonEncode({
+          'selected_columns': selectedColumns.toList(),
+          'encoding_method': selectedEncodingMethod,
+        }),
       );
 
       if (!mounted) return;
@@ -125,8 +130,48 @@ class _EncodeScreenState extends State<EncodeScreen> {
                     )
                   : ListView(
                       children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.yellow[100],
+                            border: Border.all(color: Colors.orange),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            "⚠️ Tip: Use label encoding if you're encoding your target (Y) feature.",
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
                         const Text(
-                          "Select columns to apply one-hot-encoding",
+                          "Select encoding method",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButton<String>(
+                          value: selectedEncodingMethod,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedEncodingMethod = value!;
+                            });
+                          },
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'onehot',
+                              child: Text('One-Hot Encoding'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'label',
+                              child: Text('Label Encoding'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Select columns to encode",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -144,7 +189,6 @@ class _EncodeScreenState extends State<EncodeScreen> {
                                 } else {
                                   selectedColumns.remove(col);
                                 }
-                                // Reset encodingDone if user interacts again
                                 encodingDone = false;
                               });
                             },
@@ -154,80 +198,102 @@ class _EncodeScreenState extends State<EncodeScreen> {
                     ),
             ),
       bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15, bottom: 8),
-          child: Row(
-            children: [
-              // 👈 Preview Button
-              SizedBox(
-                width: 60,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    navigateToPage(context, DataPreviewScreen());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade600,
-                    padding: EdgeInsets.zero,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.dataset,
-                      color: Colors.white,
-                      size: 30,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Download your cleaned data ",
+                    style: TextStyle(
+                      fontSize: 15,
+                    )),
+                GestureDetector(
+                  onTap: () => downloadCleanedCSV(context),
+                  child: const Text(
+                    " here",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                      fontSize: 17,
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-
-              // 👉 Main Action Button
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: isProcessing
-                      ? null
-                      : () {
-                          if (shouldNormalize) {
-                            navigateToPage(context, NormalizeScreen());
-                          } else {
-                            applyEncoding();
-                          }
-                        },
-                  icon: isProcessing
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.blue,
-                          ),
-                        )
-                      : const Icon(Icons.arrow_forward),
-                  label: Text(
-                    shouldNormalize ? "Normalize" : "Apply Encoding",
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 11, 95, 163),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, bottom: 8),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 60,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        navigateToPage(context, DataPreviewScreen());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade600,
+                        padding: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.dataset,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: isProcessing
+                          ? null
+                          : () {
+                              if (shouldNormalize) {
+                                navigateToPage(context, MLTypeSelectionScreen());
+                              } else {
+                                applyEncoding();
+                              }
+                            },
+                      icon: isProcessing
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.blue,
+                              ),
+                            )
+                          : const Icon(Icons.arrow_forward),
+                      label: Text(
+                        shouldNormalize ? "Next" : "Apply Encoding",
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(50),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.home),
+                    color: const Color.fromARGB(255, 17, 57, 143),
+                    iconSize: 45,
+                    onPressed: () => navigateToPage(context, CSVUploader()),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: Icon(Icons.home),
-                color: const Color.fromARGB(255, 17, 57, 143),
-                iconSize: 45,
-                onPressed: () => navigateToPage(context, CSVUploader()),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

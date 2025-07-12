@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/components/download_csv_file.dart';
-import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
+import 'package:analysis_app/screens/preprocessin_screens/normalization_screen.dart';
 import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -189,29 +188,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                   ),
                 ),
       bottomNavigationBar: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Download your cleaned data ",
-                    style: TextStyle(
-                      fontSize: 15,
-                    )),
-                GestureDetector(
-                  onTap: () => downloadCleanedCSV(context),
-                  child: const Text(
-                    " here",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline,
-                      fontSize: 17,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        child: 
             Padding(
               padding: const EdgeInsets.only(left: 12, bottom: 8, top: 8),
               child: Row(
@@ -247,7 +224,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                           : () {
                               if (proceedToNext) {
                                 navigateToPage(
-                                    context, MLTypeSelectionScreen());
+                                    context, NormalizeScreen());
                               } else {
                                 applyOutlierHandling();
                               }
@@ -263,7 +240,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                             )
                           : const Icon(Icons.arrow_forward),
                       label: Text(
-                        proceedToNext ? "Next" : "Apply Method",
+                        proceedToNext ? "Normalize" : "Apply Method",
                         style: const TextStyle(fontSize: 18),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -285,8 +262,6 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
                 ],
               ),
             ),
-          ],
-        ),
       ),
     );
   }

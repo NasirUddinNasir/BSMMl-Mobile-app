@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/screens/preprocessin_screens/handle_outliers_screen.dart';
+import 'package:analysis_app/screens/preprocessin_screens/encoding_screen.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
@@ -101,14 +101,17 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Normalize Numerical Data"),
+        title: const Text("Normalize Data"),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 13, 92, 156),))
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Color.fromARGB(255, 13, 92, 156),
+            ))
           : noColumns
               ? const Center(
                   child: Text(
@@ -126,6 +129,16 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: ListView(
                     children: [
+                      const Text(
+                        "Warning....\nDo not normalize the specific feature you are going to predict. Precdictions will not be realistic if target (Y) is normalized.",
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       const Text(
                         "Select numerical columns to normalize",
                         style: TextStyle(
@@ -186,7 +199,7 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                       ? null
                       : () {
                           if (showHandleOutlierButton) {
-                            navigateToPage(context, HandleOutliersScreen());
+                            navigateToPage(context, EncodeScreen());
                           } else {
                             normalizeSelectedColumns();
                           }
@@ -202,9 +215,7 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                         )
                       : const Icon(Icons.arrow_forward),
                   label: Text(
-                    showHandleOutlierButton
-                        ? "Handle Outliers"
-                        : "Apply",
+                    showHandleOutlierButton ? "Next, Encoding" : "Apply",
                     style: const TextStyle(fontSize: 18),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -217,12 +228,12 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                   ),
                 ),
               ),
-               IconButton(
-          icon: Icon(Icons.home),
-          color: const Color.fromARGB(255, 17, 57, 143),
-          iconSize: 45,
-          onPressed: () => navigateToPage(context, CSVUploader()),
-        ),
+              IconButton(
+                icon: Icon(Icons.home),
+                color: const Color.fromARGB(255, 17, 57, 143),
+                iconSize: 45,
+                onPressed: () => navigateToPage(context, CSVUploader()),
+              ),
             ],
           ),
         ),

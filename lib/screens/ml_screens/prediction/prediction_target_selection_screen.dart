@@ -18,65 +18,68 @@ class PredictionTargetSelectionScreen extends StatefulWidget {
 
 class _PredictionTargetSelectionScreenState
     extends State<PredictionTargetSelectionScreen> {
-  final String getFeaturesUrl = "$baseUrl/get-features";
   final String dropTargetUrl = "$baseUrl/drop-target";
 
   List<String> features = [];
   String? selectedTarget;
-  bool isLoading = true;
   bool isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    fetchFeatures();
+    loadFeaturesFromGlobalState();
   }
 
-  Future<void> fetchFeatures() async {
-    setState(() => isLoading = true);
-    try {
-      final response = await http.get(Uri.parse(getFeaturesUrl));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          features = List<String>.from(data['features']);
-        });
-      }
-    } catch (e) {
-      debugPrint("Error fetching features: $e");
-    } finally {
-      setState(() => isLoading = false);
-    }
+  void loadFeaturesFromGlobalState() {
+    Map<String, String> storedColumns = GlobalStore().columnsWithTypes;
+   
+    setState(() {
+      features = storedColumns.keys.toList();
+    });
   }
 
   Future<void> submitTargetColumn() async {
-    if (selectedTarget == null) return;
-    setState(() => isSubmitting = true);
+  if (selectedTarget == null) return;
 
-    try {
-      final response = await http.post(
-        Uri.parse(dropTargetUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'target_column': selectedTarget}),
-      );
-      if (!mounted) return;
-      if (response.statusCode == 200) {
+  setState(() => isSubmitting = true);
+
+  final columnType = GlobalStore().columnsWithTypes[selectedTarget!] ?? "unknown";
+
+  try {
+    final response = await http.post(
+      Uri.parse(dropTargetUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'target_column': selectedTarget,
+        'column_type': columnType,
+      }),
+    );
+    if (!mounted) return;
+
+    if (response.statusCode == 200) {
+      setState(() {
         GlobalStore().columnsWithTypes.remove(selectedTarget);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Target column set successfully.")),
-        );
-        navigateToPage(context, ModelSelectionScreen());
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to set target column.")),
-        );
-      }
-    } catch (e) {
-      debugPrint("Error submitting target column: $e");
-    } finally {
-      setState(() => isSubmitting = false);
+        features.remove(selectedTarget); 
+        selectedTarget = null;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Target column set successfully.")),
+      );
+
+      navigateToPage(context, ModelSelectionScreen());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to set target column.")),
+      );
     }
+  } catch (e) {
+    debugPrint("Error submitting target column: $e");
+  } finally {
+    setState(() => isSubmitting = false);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,11 +91,11 @@ class _PredictionTargetSelectionScreenState
         foregroundColor: Colors.black,
         elevation: 0,
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: features.isEmpty
+            ? const Center(child: Text("No columns available."))
+            : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
@@ -105,8 +108,10 @@ class _PredictionTargetSelectionScreenState
                       itemCount: features.length,
                       itemBuilder: (context, index) {
                         final column = features[index];
+                        final type =
+                            GlobalStore().columnsWithTypes[column] ?? "unknown";
                         return RadioListTile<String>(
-                          title: Text(column),
+                          title: Text("$column ($type)"),
                           value: column,
                           activeColor: Colors.blue,
                           groupValue: selectedTarget,
@@ -121,7 +126,7 @@ class _PredictionTargetSelectionScreenState
                   ),
                 ],
               ),
-            ),
+      ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(left: 15, bottom: 8),
@@ -172,10 +177,10 @@ class _PredictionTargetSelectionScreenState
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.home),
+                icon: const Icon(Icons.home),
                 color: const Color.fromARGB(255, 17, 57, 143),
                 iconSize: 45,
-                onPressed: () => navigateToPage(context, CSVUploader()),
+                onPressed: () => navigateToPage(context, const CSVUploader()),
               ),
             ],
           ),

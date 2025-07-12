@@ -45,50 +45,83 @@ class _CustomPredictionState extends State<CustomPrediction> {
     GlobalStore().columnsWithTypes.forEach((column, type) {
       final value = _controllers[column]!.text.trim();
 
-      switch (type) {
+      switch (type.toLowerCase()) {
         case 'int':
-          inputData[column] = int.tryParse(value);
+        case 'integer':
+          inputData[column] = int.tryParse(value) ?? 0;
           break;
         case 'float':
-          inputData[column] = double.tryParse(value);
+        case 'double':
+          inputData[column] = double.tryParse(value) ?? 0.0;
           break;
         case 'bool':
+        case 'boolean':
           inputData[column] = value.toLowerCase() == 'true';
           break;
+        case 'str':
+        case 'string':
+        case 'categorical':
+        case 'category':
+        case 'object':
         default:
-          inputData[column] = value;
+          // For string/categorical variables, keep original case and as string
+          inputData[column] = value; // This will be properly quoted in JSON
+          break;
       }
     });
 
-    try {
+    try { 
+      final jsonPayload = jsonEncode({'input_data': inputData});      
       final response = await http.post(
         Uri.parse('$baseUrl/predict-custom'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'input_data': inputData}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonPayload,
       );
 
-      final responseBody = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
-        setState(() => predictionResult = responseBody['prediction'].toString());
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text("Prediction Result"),
-            content: Text("Predicted value: $predictionResult"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              )
-            ],
-          ),
-        );
+        try {
+          final responseBody = jsonDecode(response.body);
+          setState(() => predictionResult =
+              responseBody['predicted_value']);
+          if (!mounted) return;
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text("Prediction Result"),
+              content: Text(
+                  "Predicted \n ${responseBody["target_column"]} : $predictionResult"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                )
+              ],
+            ),
+          );
+        } catch (e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error parsing response: $e")),
+          );
+        }
       } else {
+        // Handle error responses
+        String errorMessage = "Server Error (${response.statusCode})";
+        
+        try {
+          final responseBody = jsonDecode(response.body);
+          errorMessage = responseBody['error'] ?? errorMessage;
+        } catch (e) {
+          // If response is not JSON (like HTML error page), use the raw response
+          errorMessage = "Server Error: ${response.body}";
+        }
+        
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${responseBody['error'] ?? 'Unknown error'}")),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     } catch (e) {
@@ -122,7 +155,8 @@ class _CustomPredictionState extends State<CustomPrediction> {
                   children: [
                     const Text(
                       "Enter values for prediction:",
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     ...columnsWithTypes.entries.map((entry) {
@@ -133,22 +167,31 @@ class _CustomPredictionState extends State<CustomPrediction> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: TextFormField(
                           controller: _controllers[column],
-                          keyboardType: type == 'int' || type == 'float'
+                          keyboardType: (type.toLowerCase() == 'int' || 
+                                       type.toLowerCase() == 'integer' ||
+                                       type.toLowerCase() == 'float' || 
+                                       type.toLowerCase() == 'double')
                               ? TextInputType.number
                               : TextInputType.text,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'Enter value for $column';
                             }
-                            if ((type == 'int' && int.tryParse(value) == null) ||
-                                (type == 'float' && double.tryParse(value) == null)) {
-                              return 'Enter valid $type';
+                            final lowerType = type.toLowerCase();
+                            if ((lowerType == 'int' || lowerType == 'integer') &&
+                                int.tryParse(value) == null) {
+                              return 'Enter valid integer';
+                            }
+                            if ((lowerType == 'float' || lowerType == 'double') &&
+                                double.tryParse(value) == null) {
+                              return 'Enter valid number';
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             labelText: "$column  ($type)",
                             border: OutlineInputBorder(),
+                            hintText: _getHintText(type),
                           ),
                         ),
                       );
@@ -171,7 +214,8 @@ class _CustomPredictionState extends State<CustomPrediction> {
                         onPressed: isLoading ? null : sendPredictionRequest,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          backgroundColor: const Color.fromARGB(255, 11, 95, 163),
+                          backgroundColor:
+                              const Color.fromARGB(255, 11, 95, 163),
                           foregroundColor: Colors.white,
                           textStyle: const TextStyle(fontSize: 16),
                         ),
@@ -182,5 +226,27 @@ class _CustomPredictionState extends State<CustomPrediction> {
               ),
             ),
     );
+  }
+
+  String _getHintText(String type) {
+    switch (type.toLowerCase()) {
+      case 'int':
+      case 'integer':
+        return 'Enter a whole number';
+      case 'float':
+      case 'double':
+        return 'Enter a decimal number';
+      case 'bool':
+      case 'boolean':
+        return 'Enter true or false';
+      case 'str':
+      case 'string':
+      case 'categorical':
+      case 'category':
+      case 'object':
+        return 'Enter text/category';
+      default:
+        return 'Enter value';
+    }
   }
 }

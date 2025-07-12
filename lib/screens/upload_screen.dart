@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:analysis_app/screens/explore_screen.dart';
-import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
@@ -103,14 +102,12 @@ class CSVUploaderState extends State<CSVUploader> {
           child: Center(
             child: Column(
               children: [
-                SizedBox(height: screenHeight * 0.018),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: iconButton(context),
-                ),
+                SizedBox(height: screenHeight * 0.030),
+                // Align(
+                //   alignment: Alignment.centerLeft,
+                //   child: iconButton(context),
+                // ),
                 SizedBox(height: screenHeight * 0.010),
-
-                // 🔹 App Info Card
                 Card(
                   margin: EdgeInsets.symmetric(horizontal: 19),
                   elevation: 1,
@@ -190,8 +187,7 @@ class CSVUploaderState extends State<CSVUploader> {
                     }
                   },
                 ),
-                IconButton(onPressed: ()=>navigateToPage(context, MLTypeSelectionScreen()), icon: Icon(Icons.arrow_back))
-              ],
+                ],
             ),
           ),
         ),

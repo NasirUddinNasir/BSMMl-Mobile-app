@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/screens/preprocessin_screens/encoding_screen.dart';
+import 'package:analysis_app/screens/preprocessin_screens/handle_outliers_screen.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:analysis_app/screens/upload_screen.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
@@ -301,11 +301,11 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        navigateToPage(context, EncodeScreen());
+                        navigateToPage(context, HandleOutliersScreen());
                       },
                       icon: const Icon(Icons.arrow_forward, size: 22),
                       label: const Text(
-                        "Next, Encoding",
+                        "Handle Outliers",
                         style: TextStyle(fontSize: 18),
                       ),
                       style: ElevatedButton.styleFrom(

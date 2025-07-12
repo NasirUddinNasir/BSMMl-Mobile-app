@@ -115,7 +115,6 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
       "min_child_weight": 1,
       "gamma": 0.0,
       "objective": "reg:squarederror",
-      "early_stopping_rounds": null,
       "eval_metric": "rmse"
     },
     "predict-svr": {
@@ -143,7 +142,7 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     "weights": ["uniform", "distance"],
     "algorithm": ["auto", "ball_tree", "kd_tree", "brute"],
     "metric": ["euclidean", "manhattan", "chebyshev", "minkowski"],
-    "objective": ["binary:logistic", "multi:softmax"],
+    "objective": ["reg:squarederror", "reg:absoluteerror"],
     "booster": ["gbtree", "gblinear", "dart"],
     "tree_method": ["auto", "exact", "approx", "hist"],
 
@@ -412,7 +411,6 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     if (key == "max_depth" ||
         key == "class_weight" ||
         key == "l1_ratio" ||
-        key == "early_stopping_rounds" ||
         key == "n_jobs" ||
         key == "max_leaf_nodes" ||
         key == "metric_params") {
