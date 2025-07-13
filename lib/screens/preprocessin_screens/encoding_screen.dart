@@ -114,7 +114,8 @@ class _EncodeScreenState extends State<EncodeScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
               child: noColumnsLeft
                   ? const Center(
                       child: Text(
@@ -133,12 +134,12 @@ class _EncodeScreenState extends State<EncodeScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.yellow[100],
-                            border: Border.all(color: Colors.orange),
+                            color: Colors.red.shade50,
+                            border: Border.all(color: Colors.red),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text(
-                            "⚠️ Tip: Use label encoding if you're encoding your target (Y) feature.",
+                            "⚠️ Warning...\nAlways use label encoding for the target feature (Y). If not encoded with label encoder, the model will be trained incorrectly and custom predictions will fail.",
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
@@ -150,24 +151,37 @@ class _EncodeScreenState extends State<EncodeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        DropdownButton<String>(
-                          value: selectedEncodingMethod,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedEncodingMethod = value!;
-                            });
-                          },
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'onehot',
-                              child: Text('One-Hot Encoding'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'label',
-                              child: Text('Label Encoding'),
-                            ),
-                          ],
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, ),
+                          decoration: BoxDecoration(
+                            border:
+                                Border.all(color: Colors.grey), 
+                            borderRadius:
+                                BorderRadius.circular(8), 
+                          ),
+                          child: DropdownButton<String>(
+                            value: selectedEncodingMethod,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedEncodingMethod = value!;
+                              });
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'onehot',
+                                child: Text('One-Hot Encoding'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'label',
+                                child: Text('Label Encoding'),
+                              ),
+                            ],
+                            underline: SizedBox(), // Removes default underline
+                            isExpanded:
+                                true, // Optional: makes dropdown fill width
+                          ),
                         ),
                         const SizedBox(height: 16),
                         const Text(
@@ -177,7 +191,7 @@ class _EncodeScreenState extends State<EncodeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 7),
                         ...categoricalColumns.keys.map((col) {
                           return CheckboxListTile(
                             title: Text(col),
@@ -255,7 +269,8 @@ class _EncodeScreenState extends State<EncodeScreen> {
                           ? null
                           : () {
                               if (shouldNormalize) {
-                                navigateToPage(context, MLTypeSelectionScreen());
+                                navigateToPage(
+                                    context, MLTypeSelectionScreen());
                               } else {
                                 applyEncoding();
                               }

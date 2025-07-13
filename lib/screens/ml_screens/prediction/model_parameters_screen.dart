@@ -431,7 +431,7 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: Text(widget.modelName),
+        title: Text(widget.modelName,style: TextStyle(fontSize: 20),),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,

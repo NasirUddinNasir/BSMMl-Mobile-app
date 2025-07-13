@@ -238,9 +238,9 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
                       const Text(
                         'Select Correct Data Types for Each Column',
                         style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w500),
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       ...currentTypes.entries.map(
                           (entry) => buildColumnWidget(entry.key, entry.value)),
                     ],

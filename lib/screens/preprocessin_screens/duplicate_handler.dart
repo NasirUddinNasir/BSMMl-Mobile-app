@@ -92,8 +92,7 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
                     Text(
                       message.contains('No duplicates found')
                           ? "Great news! Your dataset has no duplicate rows, ensuring clean and consistent data."
-                          : "Your dataset has been scanned for identical rows and removed any duplicates found. "
-                              "This helps ensure clean and consistent data for analysis.",
+                          : "Your dataset has been scanned for identical rows and removed any duplicates found.",
                       textAlign: TextAlign.center,
                       style:
                           const TextStyle(fontSize: 16, color: Colors.black87),

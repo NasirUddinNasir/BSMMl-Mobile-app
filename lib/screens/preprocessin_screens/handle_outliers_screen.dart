@@ -94,7 +94,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Handle Outliers"),
+        title: const Text("Handle Outliers",style:TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,

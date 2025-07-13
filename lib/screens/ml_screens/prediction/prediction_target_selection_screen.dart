@@ -85,24 +85,41 @@ class _PredictionTargetSelectionScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Target Column"),
+        title: const Text("Select Target Column",style:TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
         child: features.isEmpty
             ? const Center(child: Text("No columns available."))
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                   Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.yellow.shade50, 
+                          border: Border.all(color: Colors.orange), 
+                          borderRadius:
+                              BorderRadius.circular(10), 
+                        ),
+                        child: const Text(
+                          "⚠️ Note: This should be the same column you did not normalize (for numerical targets) or the one you encoded using label encoding (for categorical targets).",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10,),
                   const Text(
-                    "Choose the column you want to predict:",
-                    style: TextStyle(fontSize: 18),
+                    "Select the feature",
+                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
                   Expanded(
                     child: ListView.builder(
                       itemCount: features.length,

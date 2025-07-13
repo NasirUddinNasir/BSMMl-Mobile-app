@@ -49,12 +49,9 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-
-                      const SizedBox(height: 25),
-
-                      // Image with Shadow Box
+                      const SizedBox(height: 20),
                       Container(
-                        height: screenHeight * 0.28,
+                        height: screenHeight * 0.26,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -67,13 +64,11 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 30),
-
-                      // Description Text
+                      const SizedBox(height: 25),
                       customText(
                         weight: FontWeight.w400,
                         alignText: TextAlign.justify,
-                        size: 16,
+                        size: 15,
                         color: const Color.fromARGB(255, 110, 107, 107),
                         text:
                             "BSMML helps you explore datasets, uncover insights, and train ML models – perfect for students and beginners in data science.",
@@ -114,6 +109,14 @@ class HomeScreenState extends State<HomeScreen> {
                             color: const Color.fromARGB(255, 110, 107, 107),
                             size: 15,
                             lineSpace: 1.3,
+                            text: '🧹 Preprocess your data in different steps',
+                          ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
                             text: '🔍 Perform clustering on unlabeled data',
                           ),
                           const SizedBox(height: 6),
@@ -132,10 +135,17 @@ class HomeScreenState extends State<HomeScreen> {
                             lineSpace: 1.3,
                             text: '⚙️ Adjust ML parameters for better results',
                           ),
+                          const SizedBox(height: 6),
+                          customText(
+                            weight: FontWeight.w400,
+                            color: const Color.fromARGB(255, 110, 107, 107),
+                            size: 15,
+                            lineSpace: 1.3,
+                            text: '🧮 Input custom values and predict',
+                          ),
                         ],
                       ),
                       const Spacer(),
-
                       Padding(
                         padding: const EdgeInsets.only(bottom: 40),
                         child: RawMaterialButton(

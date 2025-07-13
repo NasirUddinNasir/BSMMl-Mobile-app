@@ -97,7 +97,7 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: const Text("Prediction Models"),
+        title: const Text("Prediction Models",style: TextStyle(fontSize: 20),),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -109,7 +109,7 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
           children: [
             const Text(
               "Select a machine learning model",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Expanded(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:analysis_app/screens/explore_screen.dart';
+import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:analysis_app/screens/widgets_functions.dart';
@@ -103,15 +104,10 @@ class CSVUploaderState extends State<CSVUploader> {
             child: Column(
               children: [
                 SizedBox(height: screenHeight * 0.030),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: iconButton(context),
-                // ),
-                SizedBox(height: screenHeight * 0.010),
                 Card(
                   margin: EdgeInsets.symmetric(horizontal: 19),
                   elevation: 1,
-                  color: const Color.fromARGB(255, 250, 253, 252),
+                  color: const Color.fromARGB(255, 238, 251, 246),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: sumWH * 0.02, vertical: sumWH * 0.02),
@@ -128,23 +124,22 @@ class CSVUploaderState extends State<CSVUploader> {
                           text:
                               "Upload your CSV dataset to begin exploring, cleaning, and analyzing your data on your mobile phone.",
                           size: 14,
-                          color: Colors.grey,
+                          color: const Color.fromARGB(255, 138, 136, 136),
                         ),
                       ],
                     ),
                   ),
                 ),
-
-                SizedBox(height: 35),
+                SizedBox(height: 20),
                 Card(
-                  elevation: 2,
-                  color: const Color.fromARGB(255, 250, 253, 252),
+                  elevation: 1,
+                  color: const Color.fromARGB(255, 238, 251, 246),
                   child: Column(children: [
                     Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: sumWH * 0.08, vertical: sumWH * 0.04),
+                          horizontal: sumWH * 0.09, vertical: sumWH * 0.03),
                       child: Image.asset(
-                          height: 150, width: 155, "assets/images/upload.png"),
+                          height: 135, width: 135, "assets/images/upload.png"),
                     ),
                     if (isUploading) ...[
                       CircularProgressIndicator(),
@@ -169,7 +164,74 @@ class CSVUploaderState extends State<CSVUploader> {
                     SizedBox(height: 15),
                   ]),
                 ),
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.03),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: csvFile == null
+                          ? null
+                          : () => navigateToPage(context, DataPreviewScreen()),
+                      icon: Icon(
+                        Icons.preview,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Preview Data',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                        backgroundColor: const Color.fromARGB(255, 47, 134, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: csvFile == null
+                          ? null
+                          : () => {},
+                      icon: Icon(
+                        Icons.build,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Fix Data Issues',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                        backgroundColor:
+                            const Color.fromARGB(255, 204, 126, 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: screenHeight * 0.03),
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    '📖 Read Out User Manual',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.blue,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25,
+                ),
                 customElevatedButton(
                   xpadding: screenWidth * 0.260,
                   ypadding: screenHeight * 0.012,
@@ -187,7 +249,7 @@ class CSVUploaderState extends State<CSVUploader> {
                     }
                   },
                 ),
-                ],
+              ],
             ),
           ),
         ),

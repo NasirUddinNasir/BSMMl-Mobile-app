@@ -75,7 +75,7 @@ class _MLTypeSelectionScreenState extends State<MLTypeSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Feature Selection"),
+        title: const Text("Prediction  |  Clustering",style: TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,
@@ -87,8 +87,8 @@ class _MLTypeSelectionScreenState extends State<MLTypeSelectionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Choose what you want to do:",
-              style: TextStyle(fontSize: 18),
+              "Choose what you want to do",
+              style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             buildOptionCard("Prediction", "prediction", Icons.auto_graph),

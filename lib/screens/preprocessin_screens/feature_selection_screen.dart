@@ -97,7 +97,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Feature Selection"),
+        title: const Text("Feature Selection",style:TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,

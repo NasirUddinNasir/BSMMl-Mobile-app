@@ -101,7 +101,7 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Normalize Data"),
+        title: const Text("Normalize Data",style:TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,
@@ -126,15 +126,24 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
                   ),
                 )
               : Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
                   child: ListView(
                     children: [
-                      const Text(
-                        "Warning....\nDo not normalize the specific feature you are going to predict. Precdictions will not be realistic if target (Y) is normalized.",
-                        style: TextStyle(
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50, 
+                          border: Border.all(color: Colors.red), 
+                          borderRadius:
+                              BorderRadius.circular(10), 
+                        ),
+                        child: const Text(
+                          "⚠️ Warning....\nDo not normalize the feature you intend to predict (target variable Y). If the target is normalized, the model will produce inaccurate results, and custom input predictions may fail.",
+                          style: TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.red),
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       SizedBox(
                         height: 10,
