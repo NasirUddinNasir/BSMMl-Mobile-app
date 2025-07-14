@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:analysis_app/screens/explore_screen.dart';
+import 'package:analysis_app/screens/fix_data_issues.dart';
 import 'package:analysis_app/screens/previe_data/preview_data.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -193,7 +194,7 @@ class CSVUploaderState extends State<CSVUploader> {
                     ElevatedButton.icon(
                       onPressed: csvFile == null
                           ? null
-                          : () => {},
+                          : () => navigateToPage(context, ReplaceTextScreen()),
                       icon: Icon(
                         Icons.build,
                         color: Colors.white,

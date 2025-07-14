@@ -123,7 +123,7 @@ class ResultsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: Text('Model Perfermance'),
+        title: Text('Model Perfermance', style: TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -278,7 +278,31 @@ class ResultsScreen extends StatelessWidget {
                 ),
               ],
             ],
-            IconButton(onPressed: ()=>navigateToPage(context, CustomPrediction()), icon: Icon(Icons.arrow_forward))
+            SizedBox(height: sumWH*0.04,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36.0),
+              child: ElevatedButton.icon(
+                onPressed: () => navigateToPage(context, CustomPrediction()),
+                icon: const Icon(Icons.arrow_forward),
+                label: const Text(
+                  'Custom Prediction',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+                  backgroundColor: Colors.orange.shade400, 
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+
+                ),
+              ),
+            )
           ],
         ),
       ),
