@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:async';
-import "package:analysis_app/global_state.dart";
-import "package:analysis_app/api/base_url.dart";
+import "package:bsmml/global_state.dart";
+import "package:bsmml/api/base_url.dart";
 
 Future<int> uploadCSVFile(File csvFile) async {
   int statusCode = 0;

@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/components/download_csv_file.dart';
-import 'package:analysis_app/screens/ml_screens/ml_type_selection_screen.dart';
-import 'package:analysis_app/screens/previe_data/preview_data.dart';
-import 'package:analysis_app/screens/upload_screen.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/components/download_csv_file.dart';
+import 'package:bsmml/screens/ml_screens/ml_type_selection_screen.dart';
+import 'package:bsmml/screens/previe_data/preview_data.dart';
+import 'package:bsmml/screens/upload_screen.dart';
+import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

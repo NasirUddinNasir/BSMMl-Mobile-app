@@ -1,7 +1,7 @@
-import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:analysis_app/components/table.dart';
-import 'package:analysis_app/global_state.dart';
+import 'package:bsmml/components/table.dart';
+import 'package:bsmml/global_state.dart';
 
 class OverviewScreen extends StatefulWidget {
   const OverviewScreen({super.key});

@@ -1,9 +1,9 @@
-import 'package:analysis_app/screens/ml_screens/prediction/custom_prediction.dart';
+import 'package:bsmml/screens/ml_screens/prediction/custom_prediction.dart';
 import 'package:flutter/material.dart';
-import 'package:analysis_app/screens/upload_screen.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/screens/ml_screens/prediction/prediction_visualization_screen.dart';
-import 'package:analysis_app/api/download_train_model.dart';
+import 'package:bsmml/screens/upload_screen.dart';
+import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/screens/ml_screens/prediction/prediction_visualization_screen.dart';
+import 'package:bsmml/api/download_train_model.dart';
 
 class ResultsScreen extends StatelessWidget {
   final String modelName;

@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

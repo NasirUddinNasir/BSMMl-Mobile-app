@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:analysis_app/screens/explore_screen.dart';
-import 'package:analysis_app/screens/fix_data_issues.dart';
-import 'package:analysis_app/screens/previe_data/preview_data.dart';
+import 'package:bsmml/screens/explore_screen.dart';
+import 'package:bsmml/screens/fix_data_issues.dart';
+import 'package:bsmml/screens/previe_data/preview_data.dart';
+import 'package:bsmml/screens/user_mannual.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/api/upload.dart';
+import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/api/upload.dart';
 
 class CSVUploader extends StatefulWidget {
   const CSVUploader({super.key});
@@ -218,7 +219,7 @@ class CSVUploaderState extends State<CSVUploader> {
                 ),
                 SizedBox(height: screenHeight * 0.03),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => navigateToPage(context, UserManualScreen()),
                   child: Text(
                     '📖 Read Out User Manual',
                     style: TextStyle(

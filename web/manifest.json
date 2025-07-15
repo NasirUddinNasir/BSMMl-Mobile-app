@@ -1,6 +1,6 @@
 {
-    "name": "analysis_app",
-    "short_name": "analysis_app",
+    "name": "bsmml",
+    "short_name": "bsmml",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

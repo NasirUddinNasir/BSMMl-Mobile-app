@@ -3,7 +3,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/api/base_url.dart';
+import 'package:bsmml/api/base_url.dart';
 
 Future<Uint8List> generateClusteringPDF({
   required String model,

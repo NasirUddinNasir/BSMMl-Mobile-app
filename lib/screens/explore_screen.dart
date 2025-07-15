@@ -1,7 +1,7 @@
-import 'package:analysis_app/screens/overview_screen.dart';
-import 'package:analysis_app/screens/preprocessin_screens/feature_selection_screen.dart';
-import 'package:analysis_app/screens/relation_screen.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:bsmml/screens/overview_screen.dart';
+import 'package:bsmml/screens/preprocessin_screens/feature_selection_screen.dart';
+import 'package:bsmml/screens/relation_screen.dart';
+import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
 
 class ExploreScreen extends StatelessWidget {

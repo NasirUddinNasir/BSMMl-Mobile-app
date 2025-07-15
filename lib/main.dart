@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:analysis_app/screens/splash_screen.dart';
-import 'package:analysis_app/screens/widgets_functions.dart' show getScreenContext;
+import 'package:bsmml/screens/splash_screen.dart';
+import 'package:bsmml/components/widgets_functions.dart' show getScreenContext;
 
 
 void main() {
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
     
       debugShowCheckedModeBanner: false,
-      title: 'Data Analysis',
+      title: 'BSMML',
       theme: ThemeData(
         fontFamily: 'Poppins',
         scaffoldBackgroundColor: Colors.white,

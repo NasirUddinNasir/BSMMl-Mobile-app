@@ -1,9 +1,9 @@
-import 'package:analysis_app/screens/previe_data/preview_data.dart';
-import 'package:analysis_app/screens/upload_screen.dart';
+import 'package:bsmml/screens/previe_data/preview_data.dart';
+import 'package:bsmml/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/screens/ml_screens/prediction/prediction_target_selection_screen.dart';
-import 'package:analysis_app/screens/ml_screens/clustering/clustering_screen.dart';
+import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/screens/ml_screens/prediction/prediction_target_selection_screen.dart';
+import 'package:bsmml/screens/ml_screens/clustering/clustering_screen.dart';
 
 class MLTypeSelectionScreen extends StatefulWidget {
   const MLTypeSelectionScreen({super.key});

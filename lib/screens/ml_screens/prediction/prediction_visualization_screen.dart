@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/components/image_zooming.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/components/image_zooming.dart';
+import 'package:bsmml/components/widgets_functions.dart';
 
 class PredictionVisualizationScreen extends StatefulWidget {
   const PredictionVisualizationScreen({super.key});

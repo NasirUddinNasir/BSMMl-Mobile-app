@@ -1,4 +1,4 @@
-import 'package:analysis_app/screens/widgets_functions.dart';
+import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
 
 

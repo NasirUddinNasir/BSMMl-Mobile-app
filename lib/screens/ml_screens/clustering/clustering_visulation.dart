@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:analysis_app/components/image_zooming.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/api/base_url.dart';
+import 'package:bsmml/components/image_zooming.dart';
+import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/api/base_url.dart';
 
 class ClusterVisualizationsScreen extends StatelessWidget {
   final String model;

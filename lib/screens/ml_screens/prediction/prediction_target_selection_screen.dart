@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:analysis_app/screens/previe_data/preview_data.dart';
-import 'package:analysis_app/screens/upload_screen.dart';
+import 'package:bsmml/screens/previe_data/preview_data.dart';
+import 'package:bsmml/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:analysis_app/api/base_url.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/screens/ml_screens/prediction/model_selection_screen.dart';
-import 'package:analysis_app/global_state.dart';
+import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/screens/ml_screens/prediction/model_selection_screen.dart';
+import 'package:bsmml/global_state.dart';
 
 class PredictionTargetSelectionScreen extends StatefulWidget {
   const PredictionTargetSelectionScreen({super.key});

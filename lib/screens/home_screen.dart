@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:analysis_app/screens/widgets_functions.dart';
-import 'package:analysis_app/screens/upload_screen.dart';
+import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/screens/upload_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
