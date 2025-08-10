@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/change_column_names.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:bsmml/components/widgets_functions.dart';
@@ -29,7 +30,12 @@ class _ReplaceTextScreenState extends State<ReplaceTextScreen> {
   }
 
   Future<void> fetchAllColumns() async {
-    final response = await http.get(Uri.parse('$baseUrl/get-all-columns'));
+    final response = await http.post(
+      Uri.parse('$baseUrl/get-all-columns'),
+      body: jsonEncode({
+        'uid': GlobalStore().uid,
+      }),
+    );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -56,6 +62,7 @@ class _ReplaceTextScreenState extends State<ReplaceTextScreen> {
       Uri.parse('$baseUrl/replace-text'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
+        "uid": GlobalStore().uid,
         "column_name": selectedColumn,
         "old_text": oldText,
         "new_text": newText,
@@ -152,7 +159,7 @@ class _ReplaceTextScreenState extends State<ReplaceTextScreen> {
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                backgroundColor: Colors.blue.shade900, 
+                backgroundColor: Colors.blue.shade900,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -184,7 +191,8 @@ class _ReplaceTextScreenState extends State<ReplaceTextScreen> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () => navigateToPage(context,RenameColumnScreen()),
+                  onPressed: () =>
+                      navigateToPage(context, RenameColumnScreen()),
                   icon: Icon(
                     Icons.view_column,
                     color: Colors.white,

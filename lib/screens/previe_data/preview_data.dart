@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
 import 'package:bsmml/components/widgets_functions.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,10 +26,13 @@ class _DataPreviewScreenState extends State<DataPreviewScreen> {
 
   Future<void> fetchPreviewData() async {
     try {
-      final response = await http.get(Uri.parse(previewUrl));
+      final response = await http.post(Uri.parse(previewUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'uid': GlobalStore().uid,
+          }));
 
       if (!mounted) return;
-
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         setState(() {
@@ -111,7 +115,11 @@ class _DataPreviewScreenState extends State<DataPreviewScreen> {
           onPressed: () => Navigator.pop(context),
           backgroundColor: const Color.fromARGB(255, 11, 95, 163),
           shape: const CircleBorder(),
-          child: const Icon(Icons.keyboard_arrow_down, size: 30,color: Colors.white,),
+          child: const Icon(
+            Icons.keyboard_arrow_down,
+            size: 30,
+            color: Colors.white,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

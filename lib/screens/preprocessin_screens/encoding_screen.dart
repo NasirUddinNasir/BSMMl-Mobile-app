@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
 import 'package:bsmml/components/download_csv_file.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/ml_screens/ml_type_selection_screen.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:bsmml/screens/upload_screen.dart';
@@ -38,7 +39,12 @@ class _EncodeScreenState extends State<EncodeScreen> {
       selectedColumns.clear();
     });
     try {
-      final response = await http.get(Uri.parse(getColumnsUrl));
+      final response = await http.post(
+        Uri.parse(getColumnsUrl),
+        body: jsonEncode({
+          'uid': GlobalStore().uid
+        })
+        );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final Map<String, dynamic> columns = data['categorical_columns'];
@@ -61,6 +67,7 @@ class _EncodeScreenState extends State<EncodeScreen> {
         Uri.parse(applyEncodingUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
+          'uid': GlobalStore().uid,
           'selected_columns': selectedColumns.toList(),
           'encoding_method': selectedEncodingMethod,
         }),

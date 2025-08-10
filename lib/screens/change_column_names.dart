@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,8 @@ class _RenameColumnScreenState extends State<RenameColumnScreen> {
   }
 
   Future<void> fetchAllColumns() async {
-    final response = await http.get(Uri.parse('$baseUrl/get-all-columns'));
+    final response = await http.post(Uri.parse('$baseUrl/get-all-columns'),
+        body: jsonEncode({'uid': GlobalStore().uid}));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -54,6 +56,7 @@ class _RenameColumnScreenState extends State<RenameColumnScreen> {
       Uri.parse('$baseUrl/change-column-name'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
+        'uid':GlobalStore().uid,
         "old_name": selectedColumn,
         "new_name": newName,
       }),
@@ -137,7 +140,9 @@ class _RenameColumnScreenState extends State<RenameColumnScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             ElevatedButton.icon(
               onPressed: () => navigateToPage(context, DataPreviewScreen()),
               icon: Icon(
@@ -146,7 +151,9 @@ class _RenameColumnScreenState extends State<RenameColumnScreen> {
               ),
               label: Text(
                 'Preview Data',
-                style: TextStyle(color: Colors.white, ),
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 elevation: 0,

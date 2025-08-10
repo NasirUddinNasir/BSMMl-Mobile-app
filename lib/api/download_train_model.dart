@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -74,9 +75,15 @@ Future<void> downloadTrainedModel(BuildContext context) async {
       },
     );
 
-    await dio.download(
+    final response = await dio.post(
       url,
-      filePath,
+      data: {"uid": GlobalStore().uid},
+      options: Options(
+        responseType: ResponseType.bytes,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      ),
       onReceiveProgress: (rec, tot) {
         received = rec;
         total = tot;
@@ -85,6 +92,9 @@ Future<void> downloadTrainedModel(BuildContext context) async {
         }
       },
     );
+    
+    final file = File(filePath);
+    await file.writeAsBytes(response.data);
 
     if (context.mounted) {
       Navigator.of(context).pop();

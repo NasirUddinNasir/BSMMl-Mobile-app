@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/preprocessin_screens/missing_value_handler.dart';
 import 'package:bsmml/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +34,14 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
   Future<void> fetchFeatures() async {
     setState(() {
       isLoading = true;
-      selectedFeatures.clear(); 
+      selectedFeatures.clear();
     });
     try {
-      final response = await http.get(Uri.parse(getFeaturesUrl));
+      final response = await http.post(
+        Uri.parse(getFeaturesUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'uid': GlobalStore().uid}),
+      );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List<dynamic> features = data['features'];
@@ -62,7 +67,7 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
       final response = await http.post(
         Uri.parse(dropFeaturesUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'features': selectedFeatures.toList()}),
+        body: jsonEncode({'features': selectedFeatures.toList(),'uid':GlobalStore().uid}),
       );
 
       if (!mounted) return;
@@ -97,14 +102,16 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Feature Selection",style:TextStyle(fontSize: 20)),
+        title: const Text("Feature Selection", style: TextStyle(fontSize: 20)),
         backgroundColor: Colors.transparent,
         leading: iconButton(context),
         foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator(color:  Color.fromARGB(255, 13, 92, 156)))
+          ? const Center(
+              child: CircularProgressIndicator(
+                  color: Color.fromARGB(255, 13, 92, 156)))
           : noFeatures
               ? Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -250,12 +257,12 @@ class _FeatureSelectionScreenState extends State<FeatureSelectionScreen> {
                   ),
                 ),
               ),
-               IconButton(
-          icon: Icon(Icons.home),
-          color: const Color.fromARGB(255, 17, 57, 143),
-          iconSize: 45,
-          onPressed: () => navigateToPage(context, CSVUploader()),
-        ),
+              IconButton(
+                icon: Icon(Icons.home),
+                color: const Color.fromARGB(255, 17, 57, 143),
+                iconSize: 45,
+                onPressed: () => navigateToPage(context, CSVUploader()),
+              ),
             ],
           ),
         ),

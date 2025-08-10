@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bsmml/global_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bsmml/api/base_url.dart';
@@ -28,7 +29,12 @@ class _PredictionVisualizationScreenState
 
   Future<void> fetchPredictionVisualization() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/predict-visualization'));
+      final res = await http.post(
+        Uri.parse('$baseUrl/predict-visualization'),
+        body: jsonEncode({
+          'uid':GlobalStore().uid
+        })
+        );
 
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);

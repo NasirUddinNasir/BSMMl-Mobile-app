@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class GlobalStore {
   // Private constructor
   GlobalStore._privateConstructor();
@@ -11,4 +13,5 @@ class GlobalStore {
   }
   Map<String, dynamic> csvStats = {};
   Map<String, String> columnsWithTypes = {};
+  final String uid = const Uuid().v4();
 }

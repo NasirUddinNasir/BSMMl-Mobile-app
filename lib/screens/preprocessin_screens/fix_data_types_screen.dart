@@ -41,7 +41,12 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
 
   Future<void> fetchDataTypes() async {
     try {
-      final response = await http.get(Uri.parse(getTypesUrl));
+      final response = await http.post
+      (Uri.parse(getTypesUrl),
+      body: jsonEncode({
+        'uid':GlobalStore().uid
+      })
+      );
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
@@ -86,7 +91,7 @@ class _FixDataTypesScreenState extends State<FixDataTypesScreen> {
       final response = await http.post(
         Uri.parse(fixTypesUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'type_map': changed}),
+        body: jsonEncode({'uid': GlobalStore().uid, 'type_map': changed}),
       );
 
       if (!mounted) return;

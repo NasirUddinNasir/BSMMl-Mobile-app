@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/preprocessin_screens/encoding_screen.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:bsmml/screens/upload_screen.dart';
@@ -37,7 +38,12 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
     });
 
     try {
-      final response = await http.get(Uri.parse(getNumericalColumnsUrl));
+      final response = await http.post(
+        Uri.parse(getNumericalColumnsUrl),
+        body: jsonEncode({
+        'uid': GlobalStore().uid
+        })
+        );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final Map<String, dynamic> columns = data['numerical_columns'];
@@ -59,7 +65,7 @@ class _NormalizeScreenState extends State<NormalizeScreen> {
       final response = await http.post(
         Uri.parse(normalizeColumnsUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'columns': selectedColumns.toList()}),
+        body: jsonEncode({'uid': GlobalStore().uid,'columns': selectedColumns.toList()}),
       );
 
       if (!mounted) return;

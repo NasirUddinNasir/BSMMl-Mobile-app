@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/upload_screen.dart';
 import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,12 @@ class _RemoveDuplicatesScreenState extends State<RemoveDuplicatesScreen> {
 
   Future<void> fetchCleanedData() async {
     try {
-      final response = await http.get(Uri.parse(apiUrl));
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        body: jsonEncode({
+        "uid": GlobalStore().uid
+        })
+        );
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);

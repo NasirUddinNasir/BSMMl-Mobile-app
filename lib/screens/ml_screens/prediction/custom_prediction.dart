@@ -73,7 +73,7 @@ class _CustomPredictionState extends State<CustomPrediction> {
     });
 
     try {
-      final jsonPayload = jsonEncode({'input_data': inputData});
+      final jsonPayload = jsonEncode({'uid':GlobalStore().uid,'input_data': inputData});
       final response = await http.post(
         Uri.parse('$baseUrl/predict-custom'),
         headers: {

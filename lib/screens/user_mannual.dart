@@ -12,6 +12,12 @@ class _UserManualScreenState extends State<UserManualScreen> {
   final Set<int> _expandedItems = <int>{};
 
   final Map<String, String> manualSections = const {
+        "📂   Upload CSV Datasets":
+        "Start your analysis by uploading a CSV file.\n\n"
+            "• Navigate to the Upload screen.\n"
+            "• Select a .csv file from your device.\n"
+            "• The app will automatically parse and preview your dataset.\n"
+            "• You must upload a CSV to begin any operation in the app.",
     "🛠   Fix Data Issues":
         "Before using machine learning models, it's important to clean your dataset. The Fix Data Issues screen provides essential tools to do that.\n\n"
             "1. Replace Incorrect Values:\n"
@@ -21,12 +27,6 @@ class _UserManualScreenState extends State<UserManualScreen> {
             "   • Rename columns to more readable or meaningful names.\n"
             "   • For example, change 'col_1' to 'Age'.\n\n"
             "⚠️ You must complete these steps before encoding or modeling to avoid data integrity issues.",
-    "📂   Upload CSV Datasets":
-        "Start your analysis by uploading a CSV file.\n\n"
-            "• Navigate to the Upload screen.\n"
-            "• Select a .csv file from your device.\n"
-            "• The app will automatically parse and preview your dataset.\n"
-            "• You must upload a CSV to begin any operation in the app.",
     "📊   Overview Screen":
         "After uploading, access the Overview screen to see high-level insights about your dataset.\n\n"
             "Metrics displayed include:\n"

@@ -1,4 +1,5 @@
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
@@ -107,8 +108,8 @@ class ClusteringScreenState extends State<ClusteringScreen> {
       }
     }
 
-    // Clean up parameters - convert empty strings to null and parse types
     Map<String, dynamic> cleanedParams = {};
+    params["uid"] = GlobalStore().uid;
     params.forEach((key, value) {
       if (value != null && value.toString().isNotEmpty) {
         // Try to parse as appropriate type

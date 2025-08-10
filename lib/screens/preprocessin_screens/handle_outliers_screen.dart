@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/preprocessin_screens/normalization_screen.dart';
 import 'package:bsmml/screens/upload_screen.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,12 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
       outlierHandled = false;
     });
     try {
-      final response = await http.get(Uri.parse(getOutliersUrl));
+      final response = await http.post(
+        Uri.parse(getOutliersUrl),
+        body: jsonEncode({
+          'uid':  GlobalStore().uid
+        })
+        );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List<dynamic> outlierList = data['outliers'];
@@ -59,7 +65,7 @@ class _HandleOutliersScreenState extends State<HandleOutliersScreen> {
       final response = await http.post(
         Uri.parse(handleOutliersUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'method': selectedMethod}),
+        body: jsonEncode({'uid':GlobalStore().uid,'method': selectedMethod}),
       );
 
       if (!mounted) return;

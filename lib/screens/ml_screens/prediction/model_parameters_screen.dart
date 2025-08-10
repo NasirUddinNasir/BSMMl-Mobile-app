@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -196,7 +197,6 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     });
 
     try {
-      // Clean up null values and prepare parameters
       final cleanedParams = <String, dynamic>{};
       params.forEach((key, value) {
         if (value != null && value != "null") {
@@ -204,10 +204,15 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
         }
       });
 
+      final Map<String, dynamic> fullBody = {
+        "uid": GlobalStore().uid, 
+        "params": cleanedParams
+      };
+
       final res = await http.post(
         Uri.parse("$baseUrl/${widget.endpoint}"),
         headers: const {"Content-Type": "application/json"},
-        body: jsonEncode(cleanedParams),
+        body: jsonEncode(fullBody),
       );
 
       if (res.statusCode == 200) {
@@ -431,7 +436,10 @@ class _ModelParametersScreenState extends State<ModelParametersScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: iconButton(context),
-        title: Text(widget.modelName,style: TextStyle(fontSize: 20),),
+        title: Text(
+          widget.modelName,
+          style: TextStyle(fontSize: 20),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,

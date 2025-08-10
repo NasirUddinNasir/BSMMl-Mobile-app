@@ -14,15 +14,15 @@ Future<int> uploadCSVFile(File csvFile) async {
     final mimeType = lookupMimeType(csvFile.path);
 
     var request = http.MultipartRequest("POST", uri);
+    request.fields['uid'] = GlobalStore().uid;
     request.files.add(await http.MultipartFile.fromPath(
       'file',
       csvFile.path,
       contentType: mimeType != null ? MediaType.parse(mimeType) : null,
     ));
 
-    // Add timeout handling
     final streamedResponse = await request.send().timeout(
-      Duration(seconds: 20),
+      Duration(seconds: 30),
       onTimeout: () {
         throw TimeoutException("The connection has timed out!");
       },

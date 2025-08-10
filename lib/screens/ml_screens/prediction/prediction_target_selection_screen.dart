@@ -50,6 +50,7 @@ class _PredictionTargetSelectionScreenState
       Uri.parse(dropTargetUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
+        'uid': GlobalStore().uid,
         'target_column': selectedTarget,
         'column_type': columnType,
       }),

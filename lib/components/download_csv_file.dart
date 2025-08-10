@@ -75,9 +75,26 @@ Future<void> downloadCleanedCSV(BuildContext context) async {
       },
     );
 
-    await dio.download(
+    // await dio.download(
+    //   url,
+    //   filePath,
+    //   onReceiveProgress: (rec, tot) {
+    //     received = rec;
+    //     total = tot;
+    //     if (context.mounted) {
+    //       setDialogState(() {});
+    //     }
+    //   },
+    // );
+    final response = await dio.post(
       url,
-      filePath,
+      data: {"uid": GlobalStore().uid},
+      options: Options(
+        responseType: ResponseType.bytes,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      ),
       onReceiveProgress: (rec, tot) {
         received = rec;
         total = tot;
@@ -86,6 +103,9 @@ Future<void> downloadCleanedCSV(BuildContext context) async {
         }
       },
     );
+    
+    final file = File(filePath);
+    await file.writeAsBytes(response.data);
 
     if (context.mounted) {
       Navigator.of(context).pop();

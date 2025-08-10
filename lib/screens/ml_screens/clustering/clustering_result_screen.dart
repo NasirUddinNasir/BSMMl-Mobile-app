@@ -27,7 +27,6 @@ class ClusteringResultScreen extends StatelessWidget {
         ? "$baseUrl$mainImagePath"
         : "$baseUrl/$mainImagePath";
 
-    // Prepare filtered data for display (excluding images)
     final filteredResult = Map.from(result)..remove("images");
 
     return Scaffold(

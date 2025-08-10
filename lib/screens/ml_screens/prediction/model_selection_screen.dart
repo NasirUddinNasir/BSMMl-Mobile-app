@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bsmml/api/base_url.dart';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/previe_data/preview_data.dart';
 import 'package:bsmml/screens/upload_screen.dart';
 import 'package:bsmml/components/widgets_functions.dart';
@@ -67,7 +68,12 @@ class _ModelSelectionScreenState extends State<ModelSelectionScreen> {
 
   Future<void> fetchTargetType() async {
     try {
-      final res = await http.get(Uri.parse("$baseUrl/get-target-type"));
+      final res = await http.post(
+        Uri.parse("$baseUrl/get-target-type"),
+        body: jsonEncode({
+          'uid':GlobalStore().uid
+        })
+        );
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         setState(() {

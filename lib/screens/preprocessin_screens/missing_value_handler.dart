@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bsmml/global_state.dart';
 import 'package:bsmml/screens/upload_screen.dart';
 import 'package:bsmml/components/widgets_functions.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,8 @@ class HandleMissingValuesScreen extends StatefulWidget {
 class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
   List<dynamic> missingSummary = [];
   Map<String, Map<String, dynamic>> selectedStrategies = {};
-  List<dynamic> cleanedPreview = [];
   bool isLoading = true;
+  String? message;
 
   @override
   void initState() {
@@ -32,11 +33,10 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
       final response = await http.post(
         Uri.parse('$baseUrl/missing-info'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"data": []}),
+        body: jsonEncode({'uid': GlobalStore().uid}),
       );
 
       if (!mounted) return;
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -71,7 +71,10 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
       final response = await http.post(
         Uri.parse('$baseUrl/handle-missing-values'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(selectedStrategies),
+        body: jsonEncode({
+          'uid': GlobalStore().uid,
+          'strategies': selectedStrategies,
+        }),
       );
 
       if (!mounted) return;
@@ -79,10 +82,10 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
         setState(() {
-          cleanedPreview = result['preview'];
+         message = result['message'];
         });
 
-        showSnack('Data cleaned successfully!');
+        showSnack(message!);
 
         await fetchMissingInfo();
       } else {
@@ -238,7 +241,7 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade600,
-                  padding: EdgeInsets.zero, 
+                  padding: EdgeInsets.zero,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
@@ -255,7 +258,7 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: (missingSummary.isEmpty || cleanedPreview.isNotEmpty)
+                onPressed: (missingSummary.isEmpty )
                     ? () {
                         navigateToPage(context, RemoveDuplicatesScreen());
                       }
@@ -264,8 +267,7 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
                   Icons.arrow_forward,
                   size: 22,
                 ),
-                label: const Text('Duplicates',
-                    style: TextStyle(fontSize: 18)),
+                label: const Text('Duplicates', style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 11, 95, 163),
                   foregroundColor: Colors.white,
@@ -277,11 +279,11 @@ class HandleMissingValuesScreenState extends State<HandleMissingValuesScreen> {
               ),
             ),
             IconButton(
-          icon: Icon(Icons.home),
-          color: const Color.fromARGB(255, 17, 57, 143),
-          iconSize: 45,
-          onPressed: () => navigateToPage(context, CSVUploader()),
-        ),
+              icon: Icon(Icons.home),
+              color: const Color.fromARGB(255, 17, 57, 143),
+              iconSize: 45,
+              onPressed: () => navigateToPage(context, CSVUploader()),
+            ),
           ],
         ),
       ),

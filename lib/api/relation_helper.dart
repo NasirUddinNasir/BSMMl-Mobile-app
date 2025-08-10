@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bsmml/global_state.dart';
 import 'package:http/http.dart' as http;
 
 class RelationHelper {
@@ -24,7 +25,8 @@ class RelationHelper {
 
     setLoading(true);
 
-    final url = '$backendBaseUrl/correlate?col1=$column1&col2=$column2';
+    final uid = GlobalStore().uid;
+    final url = '$backendBaseUrl/correlate?uid=$uid&col1=$column1&col2=$column2';
     try {
       final response = await http
           .get(Uri.parse(url))
